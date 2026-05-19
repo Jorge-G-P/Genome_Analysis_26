@@ -35,5 +35,6 @@ for acc in $TRIM_ACC_LIST; do
     "${OUT_DIR}/${acc}_1P.fq.gz" "${OUT_DIR}/${acc}_1U.fq.gz" \
     "${OUT_DIR}/${acc}_2P.fq.gz" "${OUT_DIR}/${acc}_2U.fq.gz" \
     ILLUMINACLIP:"${ADAPT}":2:30:10 \
+    LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 \
     MINLEN:36
 done

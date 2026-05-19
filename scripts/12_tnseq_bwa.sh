@@ -30,16 +30,8 @@ mkdir -p "$OUT_DIR"
 # Conditionally essential screen: HI Serum vs BHI (3 replicates each).
 # Adjust TNSEQ_DIR and sample IDs if Tn-seq data is at a different path.
 
-TNSEQ_DIR=data/1_Zhang_2017/transcriptomics_data/Tn-seq
-
-# Prefer trimmed reads; fall back to raw.
-if [ -d "${TNSEQ_DIR}/trimmed" ]; then
-  FASTQ_DIR="${TNSEQ_DIR}/trimmed"
-elif [ -d "${TNSEQ_DIR}/raw" ]; then
-  FASTQ_DIR="${TNSEQ_DIR}/raw"
-else
-  FASTQ_DIR="${TNSEQ_DIR}"
-fi
+# Tn-seq reads are pre-trimmed; use raw dir directly.
+FASTQ_DIR=data/1_Zhang_2017/transcriptomics_data/Tn-seq/raw
 
 echo "Tn-seq FASTQ directory: ${FASTQ_DIR}"
 
