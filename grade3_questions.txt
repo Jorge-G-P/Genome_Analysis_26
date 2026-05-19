@@ -1,0 +1,33 @@
+General questions 
+
+Very briefly, what is the purpose of the study?
+What would be the main steps you need to take?
+Have you experience with git/github and Uppmax?
+What are your thoughts about using github and Uppmax?
+What would you need to find out before you can start?
+How to use git/github
+How to use Uppmax
+What does your data look like
+How would you structure your project plan, what is needed for a good project plan in general?
+What is metadata and where can you find it?
+What are your expectations of your results vs the actual study?
+Where can you find information about how to use a software etc.
+What to do when you are stuck, what resources do you have?
+How, when and where can you contact the teachers? 
+
+
+
+Paper specific questions
+
+Paper 1
+
+Why was Enterococcus faecium selected for this study, what aspect of it did the authors focus on?
+What different kinds of sequencing data were used for the genome assembly? Why did they use more than one technique?
+How was the assembly curated and annotated? Can you think of other ways of doing this?
+What is read trimming and why is it useful?
+What is differential expression analysis and what was it used for in this study?
+Why do they compare the gene expression of E. faecium growing in human serum versus a rich medium?
+What is a transposon and how does its incorporation affect a gene (is the gene function turned on or off)?
+What genes did they find to be important for pathogenicity in humans, how did they come to this conclusion?
+What do they hope these genes will be used for?
+What were the main results and conclusions of this study?

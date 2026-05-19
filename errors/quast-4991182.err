@@ -1,0 +1,14 @@
++ set -euo pipefail
++ REPO_ROOT=/home/gorgis/projects/genome/Genome_Analysis_26
++ cd /home/gorgis/projects/genome/Genome_Analysis_26
++ module load QUAST/5.3.0-gfbf-2024a
++ '[' -z '' ']'
++ case "$-" in
++ __lmod_sh_dbg=x
++ '[' -n x ']'
++ set +x
+Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output
+Shell debugging restarted
++ unset __lmod_sh_dbg
++ return 0
++ quast data/tmp/2_canu_assembly/paper1_e745.contigs.fasta -o data/tmp/3_quast_eval/quast_test_output

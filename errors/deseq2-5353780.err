@@ -1,0 +1,20 @@
++ set -euo pipefail
++ REPO_ROOT=/home/gorgis/projects/genome/Genome_Analysis_26
++ cd /home/gorgis/projects/genome/Genome_Analysis_26
++ module load R-bundle-Bioconductor/3.20-foss-2024a-R-4.4.2
++ '[' -z '' ']'
++ case "$-" in
++ __lmod_sh_dbg=x
++ '[' -n x ']'
++ set +x
+Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output
+Shell debugging restarted
++ unset __lmod_sh_dbg
++ return 0
++ Rscript scripts/9_DESeq.R
+estimating size factors
+estimating dispersions
+gene-wise dispersion estimates
+mean-dispersion relationship
+final dispersion estimates
+fitting model and testing

@@ -1,0 +1,143 @@
+Questions for grade 4
+To get a grade 4 you need to answer all questions 1-27.
+Reads quality control
+1. How is the quality of your data?
+2. What can generate the “fails” in FastQC that you observe in your data? Can these
+cause any problems during subsequent analyses?
+Reads preprocessing
+3. How many reads have been discarded after trimming?
+4. How can this affect your future analyses and results?
+5. How is the quality of your data after trimming?
+6. What quality threshold did you choose for the leading/trailing/slidingwindow
+parameters, and why?
+Genome and Metagenome Assembly
+7. What information can you get from the plots and reports given by the assembler (if
+you get any)?
+8. What intermediate steps generate informative output about the assembly?
+9. How many contigs do you expect? How many do you obtain?
+10. Do you expect the same result between different assemblers, for the same data? If
+you tried different assemblers, what differences do you see in the result and why do you
+think that is?
+11. What are the k-mers? What are the problems and benefits of choosing a small or a
+large k-mer?
+12. Some assemblers can include a read-correction step before doing the assembly.
+What is this step doing?
+Assembly evaluation
+13. How does your assembly compare with the reference assembly? What could have
+caused the differences?
+14. Do you think your assembly is better/worse than the public one?
+Annotation
+15. What types of features are detected by the software? Would you trust the prediction
+of some features over others and why?
+16. How can you evaluate the quality of the obtained functional annotation?
+17. How many features of each kind are detected in your contigs? Do you detect the
+same number of features as the authors? How do they differ?
+18. How many genes are annotated as ‘hypothetical protein’? Why is that so? How
+would you tackle that problem?
+Mapping
+19. What percentage of your reads map back to your contigs? Why do you think that is?
+20. What do you interpret from your read coverage differences across the genome?
+21. Do you see big differences between replicates?
+Read counting
+22. What is the distribution of the counts per gene (plot a histogram of read counts per
+gene)? Are most genes expressed? How many counts would indicate that a gene is
+expressed?
+Expression analyses
+23. If your expression results differ from those in the published article, why could it be?
+24. How do the different samples and replicates cluster together?
+25. How did you sort your differential expression results? Why?
+26. Do you need a normalization step? What would you normalize against? Does DESeq
+do it?
+27. What would you do to increase the statistical power of your expression analysis?
+
+
+
+
+Questions for grade 5
+To achieve a grade of 5, you must (in addition to the questions for grade 4) answer the
+questions for two of your additional analyses. The specific analyses will depend on your
+project and the specific analyses you have done. If you performed an analysis that is not
+listed among the suggested extra analyses, please consult the TAs, and they will provide
+appropriate questions for your analysis.
+--- Paper 1 ---
+- 1. Genome assembly with Nanopore and Illumina reads
+1. Which assembly is more suitable for downstream analyses? Why?
+2. What is the size of the largest contig of each assembly?
+3. Which assembly do you think is more accurate?
+4. Compare total assembly length to known/expected genome size.
+- 2. Assembly evaluation extra methods (BUSCO and Mummerplot/ACT) (note that
+for Mummerplot/ACT you need to use the one you didn’t use for the basic analysis)
+1. Which BUSCO dataset did you use in your analysis and why?
+2. Identify one BUSCO gene marked as “Fragmented”. Why do you think it was
+marked as fragmented?
+3. Identify one BUSCO gene marked as “Multi-copy.” How many copies are
+present, and what is the function of this gene?
+4. How did you filter the alignments for your synteny plot?
+5. What type of rearrangements can you see in your synteny plot?
+- 3. Annotation refinement
+1. Pick one protein annotated by EggNOG and further investigate its predicted
+function. Use the available information such as the orthologous group (OG)
+assignment, associated KEGG pathways and KEGG reactions to better
+understand its possible biological role. Pick a few of the IDs, explain what
+they represent and if they contribute in some way to the functional
+classification of the protein.
+2. The strain of E. faecium that is studied in this paper is predicted to be
+resistant to vancomycin. How many of the genes that belong to the operon
+that confers resistance to vancomycin can be found in the annotation
+provided by eggnog? If you could not find all of them, which other resources
+could you use to do it?
+3. Use KEGG Mapper to evaluate the completeness of relevant metabolic
+pathways, focus on one that seems to be partially incomplete (missing one or
+a few genes) and see if the gene/genes missing can be found by other
+methods (blast…). Do you think the pathway could still be functional? Has this
+absence been reported in closely related strains or species?
+- 4. Plasmid identification
+1. Based on your BLAST results, how many total plasmids did you identify in
+your E. faecium (canu) assembly? Assemblers sometimes break a single true
+plasmid into multiple smaller contigs. Did you find evidence of a single
+plasmid being fragmented across multiple contigs in your assembly? If yes:
+Choose one specific case study. State the exact tig numbers involved, and
+explain the analyses that you performed to prove these separate contigs
+actually belong to the same plasmid. Provide screenshots of your results to
+support your explanation.
+2. Based on your (canu) assembly output, which specific contigs did you identify
+as circular plasmids? Please list their exact tig numbers and provide a
+screenshot of your terminal showing the circularity evidence.
+3. Select one of the circular contigs that you identified as a plasmid in Q2a. Run
+a BLAST search against Enterococcus faecium using the sequence from that
+specific contig. In your top 10 hits, is the E745 strain present? Provide a
+screenshot of your BLAST results showing the top hits and clearly state which
+tig number you chose to search.
+4. Looking at the E745 strain hit from the BLAST search you just performed,
+what is the exact Accession Number and the Percentage Identity? Provide a
+screenshot that displays both of these values for your specific hit.
+- 5. SNP calling
+1. Explain the structure of a VCF file.
+2. How did you filter the VCF table?
+3. Which substitution type is the most common in your dataset?
+4. What is the transition/transversion ratio of your dataset?
+5. What does the SNP distribution look like across the reference genome? Do
+some regions have more SNPs than others? Why do you think that is?
+- 6. Evaluating antibiotic resistance potential
+1. How many antibiotics is the strain predicted to be resistant to? And sensitive?
+2. Which mutation in the gene gyrA confers resistance to nalidixic acid and
+ciprofloxacin? And in the gene parC?
+3. Which mapping method uses ResFinder?
+4. Why is it important to evaluate the antibiotic resistance potential of a bacterial
+strain?
+- 7. Identify essential genes for growth in human serum based on the Tn-Seq data
+analysis.
+1. How did the authors get the data from the Tn-Seq analysis? What type of
+data is it?
+2. What is the goal of the Tn-Seq analysis?
+3. Which genes seem to be important for E. faecium to grow in human serum?
+Attach a plot that supports your conclusion, analyze it and explain briefly your
+workflow.
+- 8. Polishing the assembly with Illumina reads.
+1. What types of corrections were made?
+2. How many corrections of each type were made?
+3. How did the quality of your genome change after polishing? (run QUAST to
+find out)
+4. Why do we typically use Illumina reads for polishing?
+5. What does the polishing result tell you about the quality of your original
+assembly?
