@@ -30,10 +30,9 @@ mkdir -p "$OUT_DIR"
 # Conditionally essential screen: HI Serum vs BHI (3 replicates each).
 # Adjust TNSEQ_DIR and sample IDs if Tn-seq data is at a different path.
 
-# Tn-seq reads are pre-trimmed; use raw dir directly.
-FASTQ_DIR=data/1_Zhang_2017/transcriptomics_data/Tn-seq/raw
-
-echo "Tn-seq FASTQ directory: ${FASTQ_DIR}"
+# Tn-seq reads are pre-trimmed. Each condition lives in its own directory.
+HSERUM_DIR=data/1_Zhang_2017/transcriptomics_data/Tn-Seq_HSerum
+BHI_DIR=data/1_Zhang_2017/transcriptomics_data/Tn-Seq_BHI
 
 # HI Serum samples (heat-inactivated serum, 3 replicates).
 HI_SERUM_LIST=${HI_SERUM_LIST:-"ERR1801009 ERR1801010 ERR1801011"}
@@ -41,18 +40,19 @@ HI_SERUM_LIST=${HI_SERUM_LIST:-"ERR1801009 ERR1801010 ERR1801011"}
 BHI_LIST=${BHI_LIST:-"ERR1801012 ERR1801013 ERR1801014"}
 
 map_tnseq() {
-  local acc=$1 label=$2
+  local acc=$1 label=$2 search_dir=$3
   # Use -print -quit so find exits after the first match; avoids SIGPIPE from head.
   local fq
-  fq=$(find "$FASTQ_DIR" -name "${acc}*.fastq.gz" -print -quit 2>/dev/null)
+  fq=$(find "$search_dir" -name "${acc}*.fastq.gz" -print -quit 2>/dev/null)
   # Also accept .fq.gz if .fastq.gz not found.
   if [ -z "$fq" ]; then
-    fq=$(find "$FASTQ_DIR" -name "${acc}*.fq.gz" -print -quit 2>/dev/null)
+    fq=$(find "$search_dir" -name "${acc}*.fq.gz" -print -quit 2>/dev/null)
   fi
   if [ -z "$fq" ]; then
-    echo "WARNING: No FASTQ for ${acc} in ${FASTQ_DIR}/ — skipping"
+    echo "WARNING: No FASTQ for ${acc} in ${search_dir}/ — skipping"
     return
   fi
+  echo "Mapping ${acc} (${label}) from ${fq}"
   # Include @RG header so BAMs carry sample identity for downstream tools.
   bwa mem -t "$THREADS" \
     -R "@RG\tID:${acc}\tSM:${label}\tLB:${label}\tPL:ILLUMINA" \
@@ -62,7 +62,7 @@ map_tnseq() {
   echo "Mapped ${acc} → ${label}"
 }
 
-for acc in $HI_SERUM_LIST; do map_tnseq "$acc" "HI_Serum"; done
-for acc in $BHI_LIST;       do map_tnseq "$acc" "BHI";        done
+for acc in $HI_SERUM_LIST; do map_tnseq "$acc" "HI_Serum" "$HSERUM_DIR"; done
+for acc in $BHI_LIST;       do map_tnseq "$acc" "BHI"      "$BHI_DIR";    done
 
 echo "Tn-seq BWA mapping complete. BAM files in ${OUT_DIR}"
