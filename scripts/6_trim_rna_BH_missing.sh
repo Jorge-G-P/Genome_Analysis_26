@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH --job-name=trim_bh_missing
 #SBATCH --account=uppmax2026-1-61
-#SBATCH --time=04:00:00
+#SBATCH --time=05:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=2
-#SBATCH --mem=8G
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=16G
 #SBATCH --chdir=/home/gorgis/projects/genome/Genome_Analysis_26
 #SBATCH --output=/home/gorgis/projects/genome/Genome_Analysis_26/outputs/trim_bh_missing-%j.out
 #SBATCH --error=/home/gorgis/projects/genome/Genome_Analysis_26/errors/trim_bh_missing-%j.err

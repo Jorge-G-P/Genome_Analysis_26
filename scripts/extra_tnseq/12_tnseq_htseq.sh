@@ -55,7 +55,6 @@ for bam in "${BAMS[@]}"; do
     -m union \
     -t "$FEATURE_TYPE" \
     -i ID \
-    --additional-attr gene \
     "$bam" "$GFF" \
     > "${OUT_DIR}/${base}.counts.tsv"
   echo "Counted ${base}"

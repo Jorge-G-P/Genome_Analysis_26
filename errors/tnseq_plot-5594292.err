@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "/gorilla/home/gorgis/projects/genome/Genome_Analysis_26/scripts/14_tnseq_plot.py", line 46, in <module>
+    raw = pd.concat([load_htseq(s) for s in SAMPLES], axis=1).fillna(0).astype(int)
+                     ^^^^^^^^^^^^^
+  File "/gorilla/home/gorgis/projects/genome/Genome_Analysis_26/scripts/14_tnseq_plot.py", line 42, in load_htseq
+    df = pd.read_csv(path, sep="\t", header=None, index_col=0)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sw/arch/eb/software/SciPy-bundle/2024.05-gfbf-2024a/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 1026, in read_csv
+    return _read(filepath_or_buffer, kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sw/arch/eb/software/SciPy-bundle/2024.05-gfbf-2024a/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 620, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sw/arch/eb/software/SciPy-bundle/2024.05-gfbf-2024a/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 1620, in __init__
+    self._engine = self._make_engine(f, self.engine)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sw/arch/eb/software/SciPy-bundle/2024.05-gfbf-2024a/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 1880, in _make_engine
+    self.handles = get_handle(
+                   ^^^^^^^^^^^
+  File "/sw/arch/eb/software/SciPy-bundle/2024.05-gfbf-2024a/lib/python3.12/site-packages/pandas/io/common.py", line 873, in get_handle
+    handle = open(
+             ^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/gorilla/home/gorgis/projects/genome/Genome_Analysis_26/data/tmp/12_tnseq_htseq/HI_Serum_ERR1801009.counts.tsv'

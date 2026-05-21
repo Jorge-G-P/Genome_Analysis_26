@@ -1,0 +1,13 @@
+Mapping trim_ERR1801009_pass (HI_Serum) from data/1_Zhang_2017/transcriptomics_data/Tn-Seq_HSerum/trim_ERR1801009_pass.fastq.gz
+Mapped trim_ERR1801009_pass → HI_Serum
+Mapping trim_ERR1801010_pass (HI_Serum) from data/1_Zhang_2017/transcriptomics_data/Tn-Seq_HSerum/trim_ERR1801010_pass.fastq.gz
+Mapped trim_ERR1801010_pass → HI_Serum
+Mapping trim_ERR1801011_pass (HI_Serum) from data/1_Zhang_2017/transcriptomics_data/Tn-Seq_HSerum/trim_ERR1801011_pass.fastq.gz
+Mapped trim_ERR1801011_pass → HI_Serum
+Mapping trim_ERR1801012_pass (BHI) from data/1_Zhang_2017/transcriptomics_data/Tn-Seq_BHI/trim_ERR1801012_pass.fastq.gz
+Mapped trim_ERR1801012_pass → BHI
+Mapping trim_ERR1801013_pass (BHI) from data/1_Zhang_2017/transcriptomics_data/Tn-Seq_BHI/trim_ERR1801013_pass.fastq.gz
+Mapped trim_ERR1801013_pass → BHI
+Mapping trim_ERR1801014_pass (BHI) from data/1_Zhang_2017/transcriptomics_data/Tn-Seq_BHI/trim_ERR1801014_pass.fastq.gz
+Mapped trim_ERR1801014_pass → BHI
+Tn-seq BWA mapping complete. BAM files in data/tmp/12_tnseq_bwa

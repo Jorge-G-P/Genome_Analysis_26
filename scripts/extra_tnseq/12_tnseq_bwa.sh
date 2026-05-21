@@ -35,9 +35,9 @@ HSERUM_DIR=data/1_Zhang_2017/transcriptomics_data/Tn-Seq_HSerum
 BHI_DIR=data/1_Zhang_2017/transcriptomics_data/Tn-Seq_BHI
 
 # HI Serum samples (heat-inactivated serum, 3 replicates).
-HI_SERUM_LIST=${HI_SERUM_LIST:-"ERR1801009 ERR1801010 ERR1801011"}
+HI_SERUM_LIST=${HI_SERUM_LIST:-"trim_ERR1801009_pass trim_ERR1801010_pass trim_ERR1801011_pass"}
 # BHI samples (3 replicates used in conditional screen).
-BHI_LIST=${BHI_LIST:-"ERR1801012 ERR1801013 ERR1801014"}
+BHI_LIST=${BHI_LIST:-"trim_ERR1801012_pass trim_ERR1801013_pass trim_ERR1801014_pass"}
 
 map_tnseq() {
   local acc=$1 label=$2 search_dir=$3

@@ -26,12 +26,12 @@ RESULTS_CSV = DESEQ_DIR / "Tnseq_DESeq2_results_HI_Serum_vs_BHI.csv"
 NORM_CSV    = DESEQ_DIR / "Tnseq_DESeq2_normalized_counts.csv"
 
 SAMPLES = {
-    "HI_Serum_ERR1801009": "HI_Serum",
-    "HI_Serum_ERR1801010": "HI_Serum",
-    "HI_Serum_ERR1801011": "HI_Serum",
-    "BHI_ERR1801012":      "BHI",
-    "BHI_ERR1801013":      "BHI",
-    "BHI_ERR1801014":      "BHI",
+    "HI_Serum_trim_ERR1801009_pass": "HI_Serum",
+    "HI_Serum_trim_ERR1801010_pass": "HI_Serum",
+    "HI_Serum_trim_ERR1801011_pass": "HI_Serum",
+    "BHI_trim_ERR1801012_pass":      "BHI",
+    "BHI_trim_ERR1801013_pass":      "BHI",
+    "BHI_trim_ERR1801014_pass":      "BHI",
 }
 
 res  = pd.read_csv(RESULTS_CSV, index_col=0)

@@ -1,0 +1,12 @@
+TrimmomaticPE: Started with arguments:
+ -threads 2 -phred33 data/1_Zhang_2017/transcriptomics_data/RNA-Seq_BH/raw/ERR1797973_1.fastq.gz data/1_Zhang_2017/transcriptomics_data/RNA-Seq_BH/raw/ERR1797973_2.fastq.gz data/tmp/5_trim_rna/bh/ERR1797973_1P.fq.gz data/tmp/5_trim_rna/bh/ERR1797973_1U.fq.gz data/tmp/5_trim_rna/bh/ERR1797973_2P.fq.gz data/tmp/5_trim_rna/bh/ERR1797973_2U.fq.gz ILLUMINACLIP:/sw/arch/eb/software/Trimmomatic/0.39-Java-17/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+Using PrefixPair: 'TACACTCTTTCCCTACACGACGCTCTTCCGATCT' and 'GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT'
+ILLUMINACLIP: Using 1 prefix pairs, 0 forward/reverse sequences, 0 forward only sequences, 0 reverse only sequences
+Input Read Pairs: 23953340 Both Surviving: 13831750 (57.74%) Forward Only Surviving: 9150880 (38.20%) Reverse Only Surviving: 47394 (0.20%) Dropped: 923316 (3.85%)
+TrimmomaticPE: Completed successfully
+TrimmomaticPE: Started with arguments:
+ -threads 2 -phred33 data/1_Zhang_2017/transcriptomics_data/RNA-Seq_BH/raw/ERR1797974_1.fastq.gz data/1_Zhang_2017/transcriptomics_data/RNA-Seq_BH/raw/ERR1797974_2.fastq.gz data/tmp/5_trim_rna/bh/ERR1797974_1P.fq.gz data/tmp/5_trim_rna/bh/ERR1797974_1U.fq.gz data/tmp/5_trim_rna/bh/ERR1797974_2P.fq.gz data/tmp/5_trim_rna/bh/ERR1797974_2U.fq.gz ILLUMINACLIP:/sw/arch/eb/software/Trimmomatic/0.39-Java-17/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+Using PrefixPair: 'TACACTCTTTCCCTACACGACGCTCTTCCGATCT' and 'GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT'
+ILLUMINACLIP: Using 1 prefix pairs, 0 forward/reverse sequences, 0 forward only sequences, 0 reverse only sequences
+Input Read Pairs: 23240177 Both Surviving: 12544127 (53.98%) Forward Only Surviving: 9574381 (41.20%) Reverse Only Surviving: 41596 (0.18%) Dropped: 1080073 (4.65%)
+TrimmomaticPE: Completed successfully
