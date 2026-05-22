@@ -19,7 +19,7 @@ outputs/          # slurm output logs, kept for log history
 ## Steps Overview
 
 | Step | Tool |
-|---|---|---|
+|---|---|
 | PacBio assembly | Canu |
 | Assembly QC | QUAST |
 | Annotation | Prokka |
