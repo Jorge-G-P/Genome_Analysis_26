@@ -1,14 +1,3 @@
+Referencias?
 
-5 synteny - cd /sw/data/diamond_databases env_nr.txt
-como iba lo de single o paired?
-
-
-
-5.2 trimmomatic - there is already a trimmed version of the data. Not necessary?
-6 bwa mapping - serum or BH. Do I execute for each illumina run? YES so 6 times. use them as independent experiments
-
-
-sbatch scripts/12_tnseq_bwa.sh   
-sbatch scripts/12_tnseq_htseq.sh 
-sbatch scripts/13_tnseq_deseq.sh 
-sbatch scripts/14_tnseq_plot.sh 
+mermaid?
