@@ -55,8 +55,8 @@ In this project, the goal is to reproduce the core analyses from the paper using
 6. Map RNA-seq reads to the assembled genome.
 7. Count reads per gene and identify differentially expressed genes between serum and BHI conditions.
 
-??
-Similarly to the paper, we hypothesise that some genes necessary for purine/pyrimidine biosynthesis are conditionally essential in serum and represent conserved virulence determinants across E. faecium strains. Doing the Tn-Seq analysis will prove the importance of this genes.
+
+Similarly to the paper, we hypothesise that some genes are conditionally essential in serum and represent conserved virulence determinants across E. faecium strains.
 
 ---
 
@@ -77,12 +77,12 @@ Soft links to individual files were created in the working directory rather than
 | SRA Accession | Type | Condition | Library | Reads |
 |---|---|---|---|---|
 | SRR2912679 | PacBio WGS | — | CLR long reads | ~160k reads, ~8.7 kb avg |
-| ERR1797969 | Illumina RNA-seq | HI Serum rep 1 | Paired-end 50 nt | ~52M reads |
-| ERR1797970 | Illumina RNA-seq | HI Serum rep 2 | Paired-end 50 nt | ~53M reads |
-| ERR1797971 | Illumina RNA-seq | HI Serum rep 3 | Paired-end 50 nt | ~55M reads |
-| ERR1797972 | Illumina RNA-seq | BHI rep 1 | Paired-end 50 nt | ~54M reads |
-| ERR1797973 | Illumina RNA-seq | BHI rep 2 | Paired-end 50 nt | ~48M reads |
-| ERR1797974 | Illumina RNA-seq | BHI rep 3 | Paired-end 50 nt | ~46M reads |
+| ERR1797969 | Illumina RNA-seq | HI Serum rep 1 | Paired-end 100 nt | ~52M reads |
+| ERR1797970 | Illumina RNA-seq | HI Serum rep 2 | Paired-end 100 nt | ~53M reads |
+| ERR1797971 | Illumina RNA-seq | HI Serum rep 3 | Paired-end 100 nt | ~55M reads |
+| ERR1797972 | Illumina RNA-seq | BHI rep 1 | Paired-end 100 nt | ~54M reads |
+| ERR1797973 | Illumina RNA-seq | BHI rep 2 | Paired-end 100 nt | ~48M reads |
+| ERR1797974 | Illumina RNA-seq | BHI rep 3 | Paired-end 100 nt | ~46M reads |
 
 **Note:** FastQC was run only on Illumina reads. PacBio reads are long-read CLR data for which FastQC is not appropriate.
 
@@ -346,19 +346,18 @@ Key outputs:
 
 | Feature type | Count |
 |---|---|
-| CDS (protein-coding genes) | 3,014 |
-| rRNA | 15 |
-| tRNA | 63 |
+| CDS (protein-coding genes) | 3,126 |
+| tRNA | 85 |
 | tmRNA | 1 |
-| **Total features** | **3,093** |
+| **Total features** | **3,212** |
 
-Of the 3,014 CDS predicted, approximately **34%** were annotated as "hypothetical protein" — meaning no known homolog was found in Prokka's reference databases.
+Of the 3,126 CDS predicted, approximately **44%** (1,375 genes) were annotated as "hypothetical protein" — meaning no known homolog was found in Prokka's reference databases.
 
 ### Discussion
 
-The number and types of features are broadly consistent with published *E. faecium* genomes, which typically carry ~2,900-3,200 protein-coding genes. The 15 rRNA genes are expected for a genome with the typical bacterial rRNA operon copy number.
+The number and types of features are broadly consistent with published *E. faecium* genomes, which typically carry ~2,900-3,200 protein-coding genes. Notably, no rRNA genes were detected in this Prokka run, which is unexpected — bacterial genomes typically carry ~15 rRNA genes. This likely reflects a limitation of the rRNA prediction step under the parameters used (Prokka uses Barrnap with default settings) rather than a true absence; the rRNA operons are still present in the assembly but were not annotated as such.
 
-The ~34% hypothetical protein rate is common for *E. faecium* and reflects the relatively limited functional characterisation of Enterococcal proteins in public databases. Many of these hypothetical proteins may be involved in niche-specific functions (such as serum survival) that have not yet been biochemically characterised. This is precisely why RNA-seq and Tn-seq approaches — as used by Zhang et al. — are valuable: they can identify functionally important genes even when their biochemical function is unknown.
+The ~44% hypothetical protein rate is common for *E. faecium* and reflects the relatively limited functional characterisation of Enterococcal proteins in public databases. Many of these hypothetical proteins may be involved in niche-specific functions (such as serum survival) that have not yet been biochemically characterised. This is precisely why RNA-seq and Tn-seq approaches — as used by Zhang et al. — are valuable: they can identify functionally important genes even when their biochemical function is unknown.
 
 ---
 
@@ -420,23 +419,23 @@ Mapping statistics were computed for all 6 samples via `scripts/7b_bwa_stats.sh`
 
 ### Results
 
-| Sample | Condition | Total reads | Mapped reads | % Mapped | Mean coverage |
-|---|---|---|---|---|---|
-| ERR1797972 | BHI rep 1 | 28,795,160 | 28,008,506 | 97.27% | ~450× |
-| ERR1797973 | BHI rep 2 | 27,663,500 | 26,947,138 | 97.41% | ~430× |
-| ERR1797974 | BHI rep 3 | 25,088,254 | 24,417,422 | 97.33% | ~390× |
-| ERR1797969 | Serum rep 1 | 27,294,992 | 26,614,610 | 97.51% | ~425× |
-| ERR1797970 | Serum rep 2 | 30,668,044 | 29,872,502 | 97.41% | ~475× |
-| ERR1797971 | Serum rep 3 | 28,372,676 | 27,629,180 | 97.38% | ~440× |
+| Sample | Condition | Total reads | Mapped reads | % Mapped |
+|---|---|---|---|---|
+| ERR1797972 | BHI rep 1 | 27,538,348 | 27,149,174 | 98.59% |
+| ERR1797973 | BHI rep 2 | 27,418,669 | 27,048,913 | 98.65% |
+| ERR1797974 | BHI rep 3 | 24,849,671 | 24,510,715 | 98.64% |
+| ERR1797969 | Serum rep 1 | 26,172,327 | 25,715,181 | 98.25% |
+| ERR1797970 | Serum rep 2 | 29,422,990 | 28,938,873 | 98.35% |
+| ERR1797971 | Serum rep 3 | 28,112,012 | 27,633,023 | 98.30% |
 
 ![BWA mapping rates per sample](results/plots/bwa_mapping_rates.png)
 ![RNA-seq coverage depth per contig](results/plots/coverage_per_contig.png)
 
 ### Discussion
 
-Mapping rates of ~97% are excellent and indicate that the assembled genome is a high-quality representation of the sequenced strain. The few unmapped reads (~2-3%) are likely due to sequencing errors, reads spanning contig boundaries, or contaminating sequences.
+Mapping rates of ~98% are excellent and indicate that the assembled genome is a high-quality representation of the sequenced strain. The few unmapped reads (~1-2%) are likely due to sequencing errors, reads spanning contig boundaries, or contaminating sequences.
 
-The mean genome coverage of ~400-475× is high. For differential expression analysis, depth of coverage across genes is key, and these values ensure that even lowly expressed genes will have sufficient read counts for statistical testing.
+Per-contig coverage from `samtools coverage` (see `results/6_bwa/*.coverage.txt`) shows the chromosome (tig00000001) at ~932× depth in BHI rep 1, with plasmid contigs ranging from ~25× to ~350× depending on copy number — well above the depth needed for differential expression analysis.
 
 No major differences were observed between BHI and Serum replicates in mapping rates, suggesting that the experimental conditions did not affect library quality.
 
@@ -468,7 +467,7 @@ htseq-count -f bam -r pos -s no \
 
 ### Results & Discussion
 
-Six count files were produced, each containing raw integer counts per gene for ~3,014 CDS features. These were used directly as input to DESeq2.
+Six count files were produced, each containing raw integer counts per gene for ~3,126 CDS features. These were used directly as input to DESeq2.
 
 The count distribution is typical for RNA-seq: a large number of genes have very low counts (< 10 reads), while a small number of highly expressed genes dominate the count table.
 
@@ -498,10 +497,10 @@ Plots generated: PCA plot, heatmap (top 50 DEGs), volcano plot.
 
 | Category | Count |
 |---|---|
-| Total genes tested | ~3,014 |
-| Significantly upregulated in Serum | ~180 |
-| Significantly downregulated in Serum | ~210 |
-| Total DEGs (padj < 0.05, |LFC| > 1) | ~390 |
+| Total genes tested | 3,126 |
+| Significantly upregulated in Serum (padj<0.05, log2FC>1) | 636 |
+| Significantly downregulated in Serum (padj<0.05, log2FC<-1) | 616 |
+| Total DEGs (padj < 0.05, \|LFC\| > 1) | 1,252 |
 
 
 ![DESeq2 PCA plot — Serum vs BHI](results/plots/DESeq2_PCA.png)
@@ -524,11 +523,11 @@ The comparison between serum and BHI is biologically meaningful because BHI prov
 
 This project successfully re-implemented the core genomic and transcriptomic analyses from Zhang et al. (2017) on *E. faecium* E745.
 
-The Canu assembly from PacBio long reads produced a high-quality genome (~3.04 Mb, 8 contigs, N50 ~2.77 Mb), closely matching the reference strain E0019EM0028 (99.66% nucleotide identity). Prokka annotation identified 3,014 protein-coding genes, of which ~34% are hypothetical proteins — a reflection of the limited functional characterisation of *E. faecium* gene products.
+The Canu assembly from PacBio long reads produced a high-quality genome (~3.15 Mb, 9 contigs, N50 ~2.77 Mb), closely matching the reference strain E0019EM0028 (99.66% nucleotide identity). Prokka annotation identified 3,126 protein-coding genes, of which ~44% are hypothetical proteins — a reflection of the limited functional characterisation of *E. faecium* gene products.
 
-The RNA-seq analysis revealed substantial transcriptional differences between serum and BHI conditions (~390 DEGs), with upregulation of nutrient acquisition and biosynthesis genes in serum and downregulation of growth-associated genes. This supports the hypothesis that E745 undergoes a significant adaptive response to survive in the nutrient-limited, stress-inducing environment of human blood.
+The RNA-seq analysis revealed substantial transcriptional differences between serum and BHI conditions (1,252 DEGs at padj < 0.05 and |log2FC| > 1), with upregulation of nutrient acquisition and biosynthesis genes in serum and downregulation of growth-associated genes. This supports the hypothesis that E745 undergoes a significant adaptive response to survive in the nutrient-limited, stress-inducing environment of human blood.
 
-Compared to the published results, the overall biological picture is consistent, though the exact gene lists differ due to technical differences in the assembly used as reference and the specific pipeline parameters. This highlights a common challenge in re-analysis studies: the results are biologically reproducible, but not numerically identical.
+Compared to the published results, the overall biological picture is consistent, though the exact gene lists likely differ due to technical differences in the assembly used as reference and the specific pipeline parameters.
 
 From a clinical perspective, understanding which genes are essential for E745 survival in human blood helps to guide the development of new treatment strategies — either by identifying novel drug targets or by predicting which strains pose the highest clinical risk.
 
@@ -666,7 +665,7 @@ Plots (volcano, PCA, count histogram) were generated with:
 
 | Category | Count |
 |---|---|
-| Total genes tested | ~3,014 |
+| Total genes tested | ~3,126 |
 | Significant hits (padj < 0.05) | 7 |
 | Depleted in Serum (essential in Serum, LFC < -1) | **3** |
 | Enriched in Serum (fitness cost in Serum, LFC > 1) | **4** |
@@ -693,11 +692,7 @@ Results are stored in `results/E1_TnSeq_DESeq/`.
 
 ### Discussion
 
-The relatively small number of conditionally essential genes (3) is notable. Published Tn-seq screens in *E. faecium* typically identify tens to hundreds of conditionally essential genes depending on the condition. Several factors may contribute to the low count here:
-??
-- **Transposon library coverage:** If the original Tn-seq library did not achieve saturating insertion density across all genes, some essential genes will lack insertions in both conditions and therefore cannot be detected as depleted.
-- **Assembly fragmentation:** Our Canu assembly consists of 8 contigs. Reads mapping to contig boundaries or to short contigs may be lost or miscounted, reducing statistical power.
-- **Statistical stringency:** With only 3 replicates per condition and moderate library sizes, the analysis may be underpowered to detect modest depletion effects.
+The relatively small number of conditionally essential genes (3) is notable. Published Tn-seq screens in *E. faecium* typically identify tens to hundreds of conditionally essential genes depending on the condition. This is probably due to the transposons not being properly removed from the TNSeq samples.
 
 Despite these limitations, the 3 conditionally essential genes identified represent strong candidates for serum-specific survival factors in E745. These are genes whose disruption specifically prevents growth in the blood environment but not in nutrient-rich medium — exactly the type of targets that would be most relevant for developing host-specific antimicrobial strategies.
 

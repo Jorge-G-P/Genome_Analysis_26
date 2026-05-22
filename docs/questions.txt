@@ -3,11 +3,11 @@ Referencias? - si, tools
 clean code? - un poco, no te ralles
 
 
-overall conslussions are enough?
-wiki
-cuanto de biological conclusions?
+README.md
 
 
+636
+616
 
 
 TNSeq---

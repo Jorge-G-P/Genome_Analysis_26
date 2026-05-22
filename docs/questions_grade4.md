@@ -160,7 +160,7 @@ tRNAs and tmRNAs are predicted with high confidence using well-validated tools (
 
 Several approaches can be used:
 1. **Compare feature counts with known genomes** — my 3,126 CDS is consistent with published *E. faecium* genomes (~2,900–3,200 CDS), suggesting no major over- or under-prediction
-2. **Check hypothetical protein rate** — ~34% hypothetical proteins is normal for *E. faecium*, but very high rates (>50%) would suggest annotation problems
+2. **Check hypothetical protein rate** — ~44% hypothetical proteins is on the high side for *E. faecium*; very high rates (>50%) would suggest annotation problems
 3. **BUSCO completeness** — benchmarking against conserved single-copy orthologs gives a genome-wide completeness estimate.
 4. **Manual spot-checking** — looking up key expected genes (e.g., the *vanHAX* vancomycin resistance operon, ribosomal proteins) and confirming they are present and correctly annotated
 
@@ -168,13 +168,13 @@ Several approaches can be used:
 
 **Q17. How many features of each kind are detected in your contigs? Do you detect the same number of features as the authors? How do they differ?**
 
-My Prokka annotation detected 3,126 CDS, 85 tRNAs, and 1 tmRNA across 9 contigs (3,147,208 bp total). The published E745 genome (Zhang et al. 2017) reported approximately 3,170 CDS — slightly more than my annotation. The difference (~44 CDS) is minor and expected: the published annotation used a more comprehensive pipeline with manual curation, while Prokka is a rapid automated tool. Some genes in the published annotation may be present as pseudogenes or short ORFs that Prokka filtered out. The tRNA count of 85 in my annotation is higher than the typical ~60 reported in similar strains, which may reflect tRNA predictions on plasmid contigs.
+My Prokka annotation detected 3,126 CDS, 85 tRNAs, and 1 tmRNA across 9 contigs (3,147,208 bp total). The published E745 genome (Zhang et al. 2017) reported 3,095 CDS — slightly fewer than my annotation. The difference (~31 CDS) is minor and expected: the published annotation used a more comprehensive pipeline with manual curation, while Prokka is a rapid automated tool that may over-call short ORFs. The tRNA count of 85 in my annotation is higher than the typical ~60 reported in similar strains, which may reflect tRNA predictions on plasmid contigs. No rRNA features were reported by Prokka in this run, which is unexpected for a bacterial genome and likely reflects a limitation of the Barrnap step under the parameters used rather than a true absence.
 
 ---
 
 **Q18. How many genes are annotated as 'hypothetical protein'? Why is that so? How would you tackle that problem?**
 
-Approximately **34% of the 3,126 CDS** (~1,060 genes) are annotated as "hypothetical protein." This occurs when Prokka cannot find a homolog with a known function in its reference databases (UniProt, RefSeq, TIGRfam, Pfam). For *E. faecium*, many genes are strain-specific or have only been sequenced recently without experimental characterisation.
+Approximately **44% of the 3,126 CDS** (1,375 genes) are annotated as "hypothetical protein." This occurs when Prokka cannot find a homolog with a known function in its reference databases (UniProt, RefSeq, TIGRfam, Pfam). For *E. faecium*, many genes are strain-specific or have only been sequenced recently without experimental characterisation.
 
 To reduce the hypothetical protein rate, one could:
 1. Use **EggNOG-mapper** for deeper orthology-based functional annotation against the eggNOG database
@@ -193,11 +193,11 @@ Mapping rates from BWA flagstat:
 | Sample | Condition | % Mapped |
 |---|---|---|
 | ERR1797972 | BHI rep 1 | 98.59% |
-| ERR1797973 | BHI rep 2 | ~98.5% |
-| ERR1797974 | BHI rep 3 | ~98.5% |
+| ERR1797973 | BHI rep 2 | 98.65% |
+| ERR1797974 | BHI rep 3 | 98.64% |
 | ERR1797969 | Serum rep 1 | 98.25% |
-| ERR1797970 | Serum rep 2 | ~98.4% |
-| ERR1797971 | Serum rep 3 | ~98.3% |
+| ERR1797970 | Serum rep 2 | 98.35% |
+| ERR1797971 | Serum rep 3 | 98.30% |
 
 ![BWA mapping rates per sample](results/plots/bwa_mapping_rates.png)
 
@@ -245,7 +245,7 @@ Most genes appear to be expressed at some level in at least one condition. A com
 
 **Q23. If your expression results differ from those in the published article, why could it be?**
 
-My analysis identified ~390 genes with padj < 0.05 and |log2FC| > 1 (or 524 with |log2FC| > 2), compared to the 860 genes (27.8% of the genome) reported in the published paper. The difference in total DEG count is expected: the original authors used stricter thresholds (q < 0.001 AND fold-change > 2 or < 0.5) and a closed, polished reference genome (NCBI accession CP014529), while we used padj < 0.05 with a |log2FC| > 1 filter and our Canu assembly as reference. Differences in gene models between the two assemblies also affect read-to-gene assignment. Despite the quantitative differences, the biological signal is consistent — both analyses identify purine biosynthesis as the most upregulated pathway in serum.
+My analysis identified 1,252 genes with padj < 0.05 and |log2FC| > 1 (or 524 with |log2FC| > 2), compared to the 860 genes (27.8% of the genome) reported in the published paper. The difference in total DEG count is expected: the original authors used stricter thresholds (q < 0.001 AND fold-change > 2 or < 0.5) and a closed, polished reference genome (NCBI accession CP014529), while we used padj < 0.05 with a |log2FC| > 1 filter and our Canu assembly as reference. Differences in gene models between the two assemblies also affect read-to-gene assignment. Despite the quantitative differences, the biological signal is consistent — both analyses identify purine biosynthesis as the most upregulated pathway in serum.
 
 ---
 
