@@ -7,8 +7,6 @@ Extra analyses: ResFinder (AMR) + Tn-seq (conditional essentiality)
 
 **Q6.1. How many antibiotics is the strain predicted to be resistant to? And sensitive?**
 
-From `results/E2_resfinder/pheno_table_enterococcus_faecium.txt`:
-
 E. faecium E745 is predicted to be **resistant to 6 antibiotics**: vancomycin, teicoplanin, ampicillin, ciprofloxacin, gentamicin, and erythromycin.
 
 It is predicted to have **no resistance to 6 antibiotics**: fosfomycin, quinupristin+dalfopristin, tigecycline, tetracycline, linezolid, and chloramphenicol.
@@ -16,8 +14,6 @@ It is predicted to have **no resistance to 6 antibiotics**: fosfomycin, quinupri
 ---
 
 **Q6.2. Which mutation in the gene gyrA confers resistance to nalidixic acid and ciprofloxacin? And in the gene parC?**
-
-From `results/E2_resfinder/PointFinder_table.txt` and `PointFinder_results.txt`:
 
 **gyrA:** mutation **p.E87G** (GAG → GGG, Glu87Gly at codon 87) confers resistance to nalidixic acid and ciprofloxacin.
 
@@ -29,21 +25,21 @@ Both GyrA and ParC are targets of fluoroquinolone antibiotics. These substitutio
 
 **Q6.3. Which mapping method uses ResFinder?**
 
-As stated in `results/E2_resfinder/PointFinder_table.txt` (line 4: `Mapping methode: blast`):
-
 ResFinder uses **BLAST** when an assembled genome in FASTA format is submitted. When raw reads (FASTQ) are submitted instead, it uses **KMA** (K-Mer Alignment), a faster k-mer based aligner suited for unassembled data. In this analysis, BLAST was used since the Canu assembly was submitted.
 
 ---
 
 **Q6.4. Why is it important to evaluate the antibiotic resistance potential of a bacterial strain?**
 
-1. **Clinical treatment:** E745 is resistant to vancomycin — the standard last-resort antibiotic for Gram-positive infections. Knowing this is essential to select an effective alternative (e.g., linezolid, to which E745 remains sensitive).
+It is key to know how to defend patients from bacterial infections. In this specific case:
+
+1. E745 is **resistant to vancomycin** — the standard last-resort antibiotic for Gram-positive infections. Knowing this is essential to select an effective alternative.
 
 2. **Infection control:** VRE (*vancomycin-resistant Enterococcus*) spreads easily in hospital settings. Characterising resistance profiles informs isolation and decontamination protocols.
 
-3. **Epidemiology:** Identifying specific resistance mechanisms (e.g., VanHAX operon on a plasmid, chromosomal gyrA/parC mutations) enables tracking of resistance spread between strains and hospitals.
+3. **Epidemiology:** Identifying specific resistance mechanisms enables tracking of resistance spread between strains and hospitals.
 
-4. **Antibiotic stewardship:** Understanding the full resistance landscape of clinical strains guides rational antibiotic use policies, helping to slow the emergence of further resistance.
+4. Understanding the full resistance landscape of clinical strains in order to guide rational antibiotic use policies, avoiding risks.
 
 ---
 
@@ -59,13 +55,11 @@ It is **short-read Illumina sequencing data** (single-end) targeting transposon-
 
 **Q7.2. What is the goal of the Tn-seq analysis?**
 
-The goal is to identify genes that are **conditionally essential** for growth specifically in human serum. If a gene is required for survival in serum, mutants with a transposon disrupting that gene will be selectively lost from the serum-grown population but will remain present in the BHI-grown population (where the gene is not needed). By comparing the abundance of transposon insertions per gene between serum and BHI using DESeq2, genes that are depleted in serum (negative log2 fold change) are identified as conditionally essential for serum growth. These represent potential virulence factors or adaptation mechanisms specific to the bloodstream environment.
+The goal is to identify genes that are **conditionally essential** for growth specifically in human serum. If a gene is required for survival in serum, mutants with a transposon disrupting that gene will be selectively lost from the serum-grown population but will remain present in the BHI-grown population (where the gene is not needed). By comparing the abundance of transposon insertions per gene between serum and BHI using DESeq2, genes that are depleted in serum are identified as conditionally essential for serum growth. These represent potential adaptation mechanisms specific to the bloodstream environment.
 
 ---
 
 **Q7.3. Which genes seem to be important for E. faecium to grow in human serum? Attach a plot that supports your conclusion, analyze it and explain briefly your workflow.**
-
-From `results/E1_TnSeq_DESeq/Tnseq_DESeq2_summary.txt` and `Tnseq_DESeq2_results_HI_Serum_vs_BHI.csv`:
 
 DESeq2 (contrast: HI_Serum vs BHI, reference = BHI) identified **3 genes depleted in serum** (padj < 0.05, log2FC < -1), meaning these genes are conditionally essential for growth in human serum:
 
@@ -75,7 +69,7 @@ DESeq2 (contrast: HI_Serum vs BHI, reference = BHI) identified **3 genes deplete
 | LPCHMCBP_01716 | -8.30 | 0.050 |
 | LPCHMCBP_02043 | -9.17 | 0.050 |
 
-An additional **4 genes were enriched in serum** (log2FC > 1, padj < 0.05), meaning their disruption confers a fitness advantage in serum — these encode functions that are costly or unnecessary in the bloodstream.
+An additional **4 genes were enriched in serum** (log2FC > 1, padj < 0.05), meaning their disruption confers a fitness advantage in serum — these probably encode functions that are costly or unnecessary in the bloodstream.
 
 **Workflow summary:**
 1. Tn-seq single-end reads mapped to Canu assembly with BWA mem (`scripts/extra_tnseq/12_tnseq_bwa.sh`)

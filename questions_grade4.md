@@ -240,17 +240,17 @@ Most genes appear to be expressed at some level in at least one condition. A com
 
 **Q23. If your expression results differ from those in the published article, why could it be?**
 
-My analysis identified 2,296 genes with padj < 0.05, which is broadly in the same range as the published paper but may differ in the exact gene list. Reasons for differences include:
+My analysis identified 2,296 genes with padj < 0.05, which is close to the range of the published paper but may differ in the exact gene list. Reasons for differences include:
 1. **Different reference genome** — I used my Canu assembly, while the authors used the published E745 reference. Differences in gene models affect read assignment.
-2. **Different pipeline parameters** — the authors may have used different mappers, counting tools, or statistical cutoffs
-3. **Different trimming** — my trimmed read pairs represent ~50% of raw reads; the authors may have used the full pre-trimmed dataset provided by the course
-4. **DESeq2 version** — different versions can produce slightly different normalisation and dispersion estimates
+2. **Different pipeline parameters**
+3. **Different trimming**
+4. **DESeq2 version** — different versions can produce slightly different normalisation and dispersion estimates.
 
 ---
 
 **Q24. How do the different samples and replicates cluster together?**
 
-The PCA plot shows clear separation between BHI and Serum conditions along PC1, which captures the majority of variance in the dataset. The three replicates within each condition cluster tightly together, confirming good experimental reproducibility. This pattern indicates that the growth condition (serum vs BHI) is the dominant source of transcriptional variation and that there are no major outlier samples.
+The PCA plot shows clear separation between BHI and Serum conditions along PC1, which captures the majority of variance in the dataset. The three replicates within each condition cluster tightly together, confirming good experimental reproducibility. This pattern indicates that the growth condition (serum vs BHI) is the dominant source of transcriptional variation and that there are no major outlier samples. One single component capturing so much variation suggests that the differentiation between both groups is very clear.
 
 ![DESeq2 PCA plot](results/plots/DESeq2_PCA.png)
 ![DESeq2 volcano plot](results/plots/DESeq2_volcano.png)
@@ -259,13 +259,13 @@ The PCA plot shows clear separation between BHI and Serum conditions along PC1, 
 
 **Q25. How did you sort your differential expression results? Why?**
 
-Results were sorted by **adjusted p-value (padj)** in ascending order — i.e., the most statistically significant genes appear first. Sorting by padj rather than raw p-value or fold change is appropriate because: (1) padj accounts for the multiple testing problem (testing ~3,000 genes simultaneously inflates false positives without correction), (2) fold change alone can be misleading for lowly expressed genes where large fold changes occur by chance, and (3) padj integrates both effect size and statistical confidence. Genes were additionally filtered by |log2FC| > 1 to focus on biologically meaningful changes.
+Results were sorted by **adjusted p-value (padj)** in ascending order — i.e., the most statistically significant genes appear first. Sorting by padj rather than raw p-value or fold change is appropriate because padj accounts for the multiple testing problem (testing ~3,000 genes simultaneously inflates false positives without correction). Genes were additionally filtered by |log2FC| > 1 to focus on biologically meaningful changes.
 
 ---
 
 **Q26. Do you need a normalization step? What would you normalize against? Does DESeq do it?**
 
-Yes, normalisation is essential. Without it, differences in sequencing depth between samples would appear as differential expression. For example, a sample with 30 million reads will have twice as many counts per gene as a sample with 15 million reads, even if the actual gene expression is identical.
+Yes, normalisation is necessary. Without it, differences in sequencing depth between samples would appear as differential expression. For example, a sample with 30 million reads will have twice as many counts per gene as a sample with 15 million reads, even if the actual gene expression is identical.
 
 DESeq2 normalises using **size factors** (median-of-ratios method): for each sample, it calculates the ratio of each gene's count to the geometric mean across all samples, then takes the median of these ratios as the size factor. This approach is robust to the presence of highly differentially expressed genes and does not assume that total read counts should be equal.
 
@@ -277,8 +277,7 @@ In my data, the size factors were close to 1.0 for all samples (ranging from 0.8
 
 Statistical power in RNA-seq differential expression analysis can be increased by:
 
-1. **More biological replicates** — I used 3 per condition, which is the practical minimum. Increasing to 4–6 replicates would substantially reduce false negatives, especially for genes with moderate fold changes
+1. **More biological replicates** — I used 3 per condition, which is the practical minimum.
 2. **Deeper sequencing** — more reads per sample increases count precision for lowly expressed genes
-3. **Better reference genome** — using the polished published E745 genome as reference rather than my Canu assembly would improve read mapping and reduce noise from misassembled regions
+3. **Better reference genome** — using the polished published E745 genome as reference rather than my Canu assembly could improve read mapping.
 4. **Reducing technical variation** — ensuring all libraries are prepared in the same batch and sequenced together minimises batch effects
-5. **Pre-filtering low-count genes** — removing genes with very low counts before testing reduces the multiple testing burden and improves the FDR correction for the remaining genes (DESeq2 does this automatically via independent filtering)

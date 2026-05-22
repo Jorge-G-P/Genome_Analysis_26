@@ -113,7 +113,7 @@ Genome_Analysis_26/
 
 ```mermaid
 flowchart TD
-  subgraph input["Data in"]
+  subgraph input["Data input"]
     PB["PacBio reads (SRR2912679)"]
     IL["Illumina RNA-seq (6 samples)"]
     TN["Illumina Tn-seq (6 samples)"]
