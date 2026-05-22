@@ -26,11 +26,10 @@ if [ "${#READS[@]}" -eq 0 ]; then
 fi
 
 # useGrid=false: all stages run in this allocation only (no nested sbatch). Tune #SBATCH --time above.
+# avoid child job creation that was giving trouble with course quota.
 THREADS="${SLURM_CPUS_PER_TASK:-8}"
 canu -p paper1_e745 -d data/tmp/2_canu_assembly_nogrid \
   genomeSize=3.1m \
   useGrid=false \
   "maxThreads=${THREADS}" \
   -pacbio-raw "${READS[@]}"
-
-# pacbio-raw? depends on if you want trimming. Maybe others.

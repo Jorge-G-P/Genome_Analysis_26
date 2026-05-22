@@ -1,3 +1,21 @@
-Referencias?
+Referencias? - si, tools
 
-mermaid? - are they gonna check github or in local?
+clean code? - un poco, no te ralles
+
+
+overall conslussions are enough?
+wiki
+cuanto de biological conclusions?
+
+
+
+
+TNSeq---
+
+cutadapt script
+quita la seq del transposon que está en 3'. -O 10
+minimum length 16 nucleotides. para que solo mappee en un sitio. Pero mira que el paper es distinto - y añádelo a la discusion.
+bwa puede dar error con seqs de menos de 70 nt. Y aqui vamos a usar 16 nt o un pelin más.
+6 primeros - y luego los ~29 ultimos.
+
+

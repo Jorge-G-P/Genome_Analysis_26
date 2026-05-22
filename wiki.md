@@ -55,6 +55,9 @@ In this project, the goal is to reproduce the core analyses from the paper using
 6. Map RNA-seq reads to the assembled genome.
 7. Count reads per gene and identify differentially expressed genes between serum and BHI conditions.
 
+??
+Similarly to the paper, we hypothesise that some genes necessary for purine/pyrimidine biosynthesis are conditionally essential in serum and represent conserved virulence determinants across E. faecium strains. Doing the Tn-Seq analysis will prove the importance of this genes.
+
 ---
 
 ## 2. Project Plan & Data Management
@@ -182,15 +185,14 @@ Reports are stored in `results/1_fastqc/` (HTML + ZIP per sample).
 
 ### Results & Discussion
 
-All 12 samples showed consistently high base quality (Phred scores > 30 across most positions), which is typical for modern Illumina sequencing. The main observations were:
-??
-- **Per-base sequence quality:** Good across all samples, with the expected slight quality drop at the 3' end of reads — a common artifact of sequencing-by-synthesis chemistry
-- **Adapter content:** TruSeq adapters detected at low levels in several samples, justifying trimming
-- **Per-sequence GC content:** Broadly normal distributions, though a slight secondary GC peak was present in some samples — this is often associated with rRNA contamination or highly expressed transcripts dominating the library, which is expected in bacterial RNA-seq
-- **Sequence duplication levels:** Moderate to high duplication, which is normal for RNA-seq data where highly expressed genes produce many identical reads
-- **"Fails" observed:** The "Per base sequence content" module flagged failures in all samples. This is expected for RNA-seq data as the first ~10 bases show composition biases from random hexamer priming during library preparation — not a data quality problem per se
+All 12 samples passed the critical quality modules (per-base sequence quality, per-sequence quality scores, per-base N content, sequence length distribution), with Phred scores > 30 across most positions. However, several modules showed failures that are expected and well-understood in the context of bacterial RNA-seq:
 
-Overall the raw data quality was deemed sufficient to proceed with trimming.
+- **Adapter Content (FAIL, 12/12 samples):** TruSeq Illumina adapters are present in all samples, as expected from the library preparation protocol. This is not a data quality problem — it is the reason Trimmomatic is run next. Adapters will be removed in the preprocessing step.
+- **Sequence Duplication Levels (FAIL, 12/12 samples):** High duplication is normal in RNA-seq data. Highly expressed genes produce many identical reads, and any rRNA not depleted during library prep is inherently repetitive. Unlike genomic DNA sequencing, duplicate reads in RNA-seq reflect real biology and are not removed.
+- **Per base sequence content (FAIL, 9/12 samples):** The first ~10 bases show biased nucleotide composition, a well-documented artifact of random hexamer priming during cDNA synthesis. This does not affect downstream analyses.
+- **Overrepresented sequences and Per sequence GC content (FAIL, 6/12 BHI samples only):** A secondary GC peak and overrepresented sequences were observed in the BHI replicates. This likely reflects rRNA contamination and/or highly expressed BHI-specific transcripts dominating the library.
+
+Overall, the data quality is suitable for downstream analysis. The failures observed are expected artifacts of RNA-seq library preparation, not indicators of poor sequencing quality.
 
 ---
 
@@ -265,7 +267,7 @@ The assembled contigs are in: `data/tmp/2_canu_assembly/paper1_e745.contigs.fast
 
 ### Results
 
-Canu produced a small number of contigs for a bacterial genome, which is expected given the long reads available (long reads can span repetitive regions that fragment short-read assemblies). The assembly was evaluated in detail in the next step (QUAST),?? but key contig-level annotations from Canu's output indicate that the largest contig is circular — consistent with a complete bacterial chromosome.
+Canu produced a small number of contigs for a bacterial genome, which is expected given the long reads available (long reads can span repetitive regions that fragment short-read assemblies). The assembly was evaluated in detail in the next step (QUAST), but key contig-level annotations from Canu's output indicate that the largest contig is circular — consistent with a complete bacterial chromosome.
 
 The read length distribution from the Canu report shows the PacBio library quality:
 
@@ -281,14 +283,15 @@ PacBio CLR long reads are well-suited for bacterial genome assembly because thei
 
 ### Methods
 
-QUAST (v5.2) was used to evaluate the quality of the Canu assembly, both with and without a reference genome. The reference used was *E. faecium* E0019EM0028 (GenBank accession obtained via NCBI BLAST of the assembled contigs), which showed 99.66% nucleotide identity to E745.
+QUAST (v5.3) was used to evaluate the assembly quality without an external reference, computing structural contiguity metrics only (N50, L50, total length, GC content, etc.). For comparative context, the assembled contigs were searched against NCBI using BLAST, which identified *E. faecium* E0019EM0028 as the closest available reference strain (99.66% nucleotide identity to E745).
 
 ```bash
 # Script: scripts/3_quast.sh
-module load QUAST/5.2.0
-quast.py data/tmp/2_canu_assembly/paper1_e745.contigs.fasta \
-    -r data/E0019_full.fasta \
-    -o data/tmp/3_quast_eval/
+module load QUAST/5.3.0-gfbf-2024a
+quast.py \
+    --output-dir data/tmp/3_quast \
+    --threads 1 \
+    data/tmp/2_canu_assembly/paper1_e745.contigs.fasta
 ```
 
 ### Results
@@ -297,23 +300,21 @@ Key QUAST metrics:
 
 | Metric | Value |
 |---|---|
-| Number of contigs | 8 |
-| Largest contig | ~2.77 Mb |
-| Total assembly length | ~3.04 Mb |
-| N50 | ~2.77 Mb |
-| GC content | ~38.1% |
-| Genome fraction (vs reference) | ~97.8% |
-| Misassemblies | 3 |
-| Mismatches per 100 kbp | ~29 |
+| Number of contigs | 9 |
+| Largest contig | 2,775,132 bp |
+| Total assembly length | 3,147,208 bp |
+| N50 | 2,775,132 bp |
+| GC content | 37.79% |
+| N's per 100 kbp | 0.00 |
 
 ![QUAST Nx plot](results/plots/QUAST_Nx.png)
 ![QUAST cumulative length plot](results/plots/QUAST_cumulative.png)
 
 ### Discussion
 
-The largest contig (~2.77 Mb) represents what appears to be a nearly complete chromosome — this is consistent with the expected E. faecium genome size of ~2.7-2.9 Mb for the chromosomal component. The remaining ~0.27 Mb is distributed across 7 smaller contigs, might be representing plasmids. This matches the published E745 genome, which carries multiple plasmids.
+The largest contig (2,775,132 bp) represents what appears to be a nearly complete chromosome — consistent with the expected *E. faecium* genome size of ~2.7–2.9 Mb for the chromosomal component. The remaining ~372 kb is distributed across 8 smaller contigs, likely representing plasmids. This matches the published E745 genome, which carries multiple plasmids.
 
-The genome fraction of ~97.8% against the reference indicates that the assembly covers almost the entire reference genome. The 3 misassemblies and low mismatch rate (~29 per 100 kbp) are acceptable for a PacBio CLR assembly without polishing. The GC content of ~38.1% is consistent with *E. faecium* in general.
+The N50 equal to the largest contig length indicates that more than half the assembly is contained in a single sequence — a hallmark of a high-quality long-read assembly. The absence of ambiguous bases (0 N's per 100 kbp) reflects Canu's ability to span repetitive regions that would otherwise require gap-filling. The GC content of 37.79% is consistent with *E. faecium* in general.
 
 Overall, the assembly quality is good and suitable for annotation and RNA-seq mapping.
 
@@ -507,16 +508,15 @@ Plots generated: PCA plot, heatmap (top 50 DEGs), volcano plot.
 ![DESeq2 volcano plot — Serum vs BHI](results/plots/DESeq2_volcano.png)
 
 ### Discussion
-??
-The PCA plot shows clear separation between the Serum and BHI conditions along the first principal component, confirming that growth condition is the dominant source of transcriptional variation. Replicates within each condition cluster tightly together, indicating good experimental reproducibility.
+The PCA plot shows clear separation between the Serum and BHI conditions along the first principal component, suggesting that growth condition is the main source of transcriptional variation. Replicates within each condition cluster tightly together, indicating good experimental reproducibility.
 
-The most strongly upregulated genes in serum are a cluster of **purine biosynthesis genes**: *purS*, *purQ*, *purC*, *purL*, *purF*, *purM*, *purH*, *purD*, *purN* (log2FC 8–9.4). This means the bacterium massively upregulates de novo purine synthesis when growing in serum — consistent with serum being purine-poor compared to BHI. Also upregulated are peptide transport genes (*dppC*, *dppE*, *oppB*) and general stress proteins (*gspA_1*, *gspA_2*), suggesting active nutrient scavenging and stress adaptation in blood.
+The most strongly upregulated genes in serum are a cluster of **purine biosynthesis genes**: *purS*, *purQ*, *purC*, *purL*, *purF*, *purM*, *purH*, *purD*, *purN* (log2FC +8.1 to +9.4, loci LPCHMCBP_02564–02572). This indicates that the bacterium strongly upregulates de novo purine synthesis when growing in serum — consistent with serum being purine-poor compared to BHI. Also highly upregulated are peptide transport genes (*dppE*, *dppC*, *oppB*; log2FC +6.4 to +7.3) and general stress proteins (*gspA_1*, *gspA_2*; log2FC +7.0 to +7.4), suggesting active nutrient scavenging and stress adaptation in blood.
 
-The most strongly downregulated genes in serum are **fatty acid biosynthesis genes**: *fabD*, *fabG*, *fabZ*, *fabF*, *fabH*, *accA*, *accB*, *accD*, *cfiB* (log2FC −5 to −6), as well as carbohydrate metabolism genes (*lacC*, *fruA_5*, *lacS*) and oxidative stress genes (*ahpC*, *ahpF*). This suggests that when growing in serum the bacterium reduces lipid synthesis and carbohydrate fermentation, which are pathways well-suited to the nutrient-rich BHI environment but less relevant in blood.
+The most strongly downregulated genes in serum are **fatty acid biosynthesis genes**: *fabD*, *fabG_1*, *fabZ_1*, *fabF*, *fabH*, *accA*, *accB*, *accD*, *cfiB*, *acpA* (log2FC −4.5 to −5.7), as well as carbohydrate metabolism genes (*lacC_1*, *fruA_5*, *lacS*; log2FC −5.4 to −6.0) and oxidative stress response genes (*ahpC*, *ahpF*; log2FC −4.6 to −4.9). This suggests that when growing in serum the bacterium reduces lipid synthesis and carbohydrate fermentation — pathways well-suited to the nutrient-rich BHI environment but less relevant in blood.
 
-These findings are consistent with the conclusions of Zhang et al. (2017), who specifically identified purine biosynthesis (*purD*, *purH*, *purF*, *pyrK_2*) as the most critical pathway for E. faecium growth in human serum. The overlap between our RNA-seq results and their Tn-seq fitness data — both pointing to purine biosynthesis — strengthens the biological interpretation. Quantitative differences in the total number of DEGs are expected, as the original authors used a closed reference genome (CP014529) while we used our Canu assembly.
+These findings are consistent with the conclusions of Zhang et al. (2017), who specifically identified purine biosynthesis (*purD*, *purH*, *purF*, *pyrK_2*) as the most critical pathway for *E. faecium* growth in human serum. The overlap between our RNA-seq results and their Tn-seq fitness data — both pointing to purine biosynthesis — strengthens the biological interpretation. Quantitative differences in the total number of DEGs are expected, as the original authors used a closed reference genome (CP014529) while we used our Canu assembly.
 
-The comparison between serum and BHI is biologically meaningful because BHI provides abundant amino acids, sugars, and lipid precursors, while heat-inactivated human serum is nutrient-poor (complement inactivated, no active immune components) and forces the bacterium to synthesise nucleotides and scavenge peptides de novo. Genes induced in serum therefore represent genuine virulence and survival factors relevant to clinical bloodstream infection.
+The comparison between serum and BHI is biologically meaningful because BHI provides abundant amino acids, sugars, and lipid precursors, while heat-inactivated human serum is nutrient-poor and forces the bacterium to synthesise nucleotides and scavenge peptides de novo. Genes induced in serum therefore represent genuine virulence and survival factors relevant to clinical bloodstream infection.
 
 ---
 
@@ -530,7 +530,7 @@ The RNA-seq analysis revealed substantial transcriptional differences between se
 
 Compared to the published results, the overall biological picture is consistent, though the exact gene lists differ due to technical differences in the assembly used as reference and the specific pipeline parameters. This highlights a common challenge in re-analysis studies: the results are biologically reproducible, but not numerically identical.
 
-From a clinical perspective, understanding which genes are essential for E745 survival in human blood could guide the development of new treatment strategies — either by identifying novel drug targets or by predicting which strains pose the highest clinical risk.
+From a clinical perspective, understanding which genes are essential for E745 survival in human blood helps to guide the development of new treatment strategies — either by identifying novel drug targets or by predicting which strains pose the highest clinical risk.
 
 ---
 

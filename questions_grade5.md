@@ -63,13 +63,20 @@ The goal is to identify genes that are **conditionally essential** for growth sp
 
 DESeq2 (contrast: HI_Serum vs BHI, reference = BHI) identified **3 genes depleted in serum** (padj < 0.05, log2FC < -1), meaning these genes are conditionally essential for growth in human serum:
 
-| Gene ID | log2FC | padj |
-|---|---|---|
-| LPCHMCBP_00934 | -9.80 | 0.039 |
-| LPCHMCBP_01716 | -8.30 | 0.050 |
-| LPCHMCBP_02043 | -9.17 | 0.050 |
+| Gene ID | Gene name | log2FC | padj | Function |
+|---|---|---|---|---|
+| LPCHMCBP_00934 | *agaC_1* | -9.80 | 0.039 | N-acetylgalactosamine permease IIC component |
+| LPCHMCBP_01716 | *rpoN1* | -8.30 | 0.050 | RNA polymerase sigma-54 factor |
+| LPCHMCBP_02043 | — | -9.17 | 0.050 | Hypothetical protein |
 
-An additional **4 genes were enriched in serum** (log2FC > 1, padj < 0.05), meaning their disruption confers a fitness advantage in serum — these probably encode functions that are costly or unnecessary in the bloodstream.
+An additional **4 genes were enriched in serum** (log2FC > 1, padj < 0.05), meaning their disruption confers a fitness advantage in serum:
+
+| Gene ID | Gene name | log2FC | padj | Function |
+|---|---|---|---|---|
+| LPCHMCBP_01607 | — | +20.91 | <0.001 | Phosphorylated carbohydrates phosphatase |
+| LPCHMCBP_01170 | — | +9.71 | 0.039 | Hypothetical protein |
+| LPCHMCBP_01900 | — | +9.06 | 0.050 | IS1595 family transposase ISCac2 |
+| LPCHMCBP_02588 | *iolU_2* | +9.00 | 0.050 | scyllo-inositol 2-dehydrogenase |
 
 **Workflow summary:**
 1. Tn-seq single-end reads mapped to Canu assembly with BWA mem (`scripts/extra_tnseq/12_tnseq_bwa.sh`)

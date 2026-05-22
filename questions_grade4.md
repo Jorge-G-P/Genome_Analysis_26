@@ -7,15 +7,20 @@
 
 **Q1. How is the quality of your data?**
 
-The quality of the Illumina RNA-seq data is good. FastQC reports show Phred scores > 30 across most positions for all 12 files (6 samples × 2 paired reads). There is a slight drop in quality at the 3' ends of reads, which is normal for Illumina sequencing-by-synthesis chemistry. GC content distributions are unimodal and consistent across samples (~38).
-
-PacBio reads were also of good quality, cause even though they were not directly evaluated with fastQC, they were able to produce an assembly with good quality.
+The quality of the Illumina RNA-seq data is good overall. FastQC reports show Phred scores > 30 across most positions for all 12 files, with clean per-base N content and uniform read length distributions. Several modules show failures (see Q2), but these are expected for bacterial RNA-seq and do not indicate poor sequencing quality. PacBio reads were not evaluated with FastQC (it is only appropriate for Illumina data), but the Canu assembly quality confirms they were of sufficient quality.
 
 ---
 
 **Q2. What can generate the "fails" in FastQC that you observe in your data? Can these cause any problems during subsequent analyses?**
 
-The main FastQC "fail" observed across all samples is in the **Per Base Sequence Content** module, where the first ~10 bases show non-uniform nucleotide composition. This might be caused by random hexamer priming bias during RNA library preparation — the hexamers used for reverse transcription do not bind truly randomly, leading to a biased composition at the start of reads. This is a known and expected artefact of RNA-seq and is not a sign of poor data quality. It does not cause problems in downstream analyses because it affects only a few positions at read ends, which Trimmomatic removes anyway.
+The main FAILs observed across all samples are:
+
+- **Adapter Content (12/12 samples):** TruSeq Illumina adapters are present in all reads — expected from library prep. Not a quality problem; adapters are removed by Trimmomatic in the next step.
+- **Sequence Duplication Levels (12/12 samples):** High read duplication is normal in RNA-seq. Highly expressed genes and any residual rRNA generate many identical reads. Unlike genomic DNA, these are not PCR duplicates and are not removed.
+- **Per base sequence content (9/12 samples):** Biased nucleotide composition at the first ~10 bases, caused by random hexamer priming during cDNA synthesis. A known, unavoidable RNA-seq artifact that does not affect mapping or quantification.
+- **Overrepresented sequences / Per sequence GC content (6/12, BHI samples only):** Likely reflects rRNA contamination or highly expressed BHI-specific transcripts.
+
+None of these failures pose a problem for downstream analyses, as they reflect known RNA-seq library prep artifacts or biological signal rather than sequencing quality issues.
 ---
 
 ## Reads Preprocessing
@@ -113,7 +118,7 @@ Read correction uses the redundancy of sequencing coverage to identify and fix s
 
 **Q13. How does your assembly compare with the reference assembly? What could have caused the differences?**
 
-QUAST was run against the *E. faecium* E0019EM0028 reference (99.66% nucleotide identity to E745). Key metrics:
+QUAST was run without an external reference, evaluating structural contiguity metrics only (N50, L50, total length, etc.). But for comparative context, a BLAST search of the assembled contigs against NCBI identified *E. faecium* E0019EM0028 as the closest match (99.66% nucleotide identity), which was separately used for the synteny analysis (MUMmerplot). Key QUAST metrics:
 
 | Metric | My assembly |
 |---|---|
@@ -124,7 +129,7 @@ QUAST was run against the *E. faecium* E0019EM0028 reference (99.66% nucleotide 
 | GC content | 37.79% |
 | N's per 100 kbp | 0.00 |
 
-The assembly covers ~97–98% of the reference genome with very few gaps. There are minor structural differences (misassemblies) likely caused by: (1) genuine genomic differences between E745 and E0019EM0028 (these are different strains, not the same isolate), (2) repetitive sequences such as rRNA operons that can be collapsed or misjoined in assembly, and (3) possible transposable elements or genomic islands that differ between strains.
+The N50 equal to the largest contig confirms that more than half the assembly sits in a single sequence — consistent with a near-complete chromosome. There are no ambiguous bases (0 N's per 100 kbp), reflecting Canu's ability to span repetitive regions with long reads. Structural comparison with the reference (E0019EM0028) was performed separately via MUMmerplot (section 8), which showed 99.66% identity and minor rearrangements.
 
 ---
 
@@ -240,11 +245,7 @@ Most genes appear to be expressed at some level in at least one condition. A com
 
 **Q23. If your expression results differ from those in the published article, why could it be?**
 
-My analysis identified 2,296 genes with padj < 0.05, which is close to the range of the published paper but may differ in the exact gene list. Reasons for differences include:
-1. **Different reference genome** — I used my Canu assembly, while the authors used the published E745 reference. Differences in gene models affect read assignment.
-2. **Different pipeline parameters**
-3. **Different trimming**
-4. **DESeq2 version** — different versions can produce slightly different normalisation and dispersion estimates.
+My analysis identified ~390 genes with padj < 0.05 and |log2FC| > 1 (or 524 with |log2FC| > 2), compared to the 860 genes (27.8% of the genome) reported in the published paper. The difference in total DEG count is expected: the original authors used stricter thresholds (q < 0.001 AND fold-change > 2 or < 0.5) and a closed, polished reference genome (NCBI accession CP014529), while we used padj < 0.05 with a |log2FC| > 1 filter and our Canu assembly as reference. Differences in gene models between the two assemblies also affect read-to-gene assignment. Despite the quantitative differences, the biological signal is consistent — both analyses identify purine biosynthesis as the most upregulated pathway in serum.
 
 ---
 
