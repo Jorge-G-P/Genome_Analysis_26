@@ -9,7 +9,6 @@
 
 ## Table of Contents
 
-0. [Key Results Summary](#0-key-results-summary)
 1. [Project Overview](#1-project-overview)
 2. [Project Plan & Data Management](#2-project-plan--data-management)
 3. [Reads Quality Control — FastQC](#3-reads-quality-control--fastqc)
@@ -40,8 +39,8 @@
 
 The authors used a combination of whole-genome sequencing (PacBio long reads), RNA-seq (Illumina short reads), and Tn-seq (transposon insertion sequencing) to characterise:
 - The complete genome of *E. faecium* E745
-- Which genes are differentially expressed when the bacterium grows in human serum versus a rich laboratory medium (BHI)
-- Which genes are essential for growth specifically in human serum (identified by transposon disruption). (Extra analysis 2)
+- Which genes are differentially expressed when the bacterium grows in human serum.
+- Which genes are essential for growth specifically in human serum (identified by transposon disruption).
 
 ### Aims of This Project
 
@@ -74,15 +73,15 @@ Soft links to individual files were created in the working directory rather than
 
 #### Sample Metadata
 
-| SRA Accession | Type | Condition | Library | Reads |
-|---|---|---|---|---|
-| SRR2912679 | PacBio WGS | — | CLR long reads | ~160k reads, ~8.7 kb avg |
-| ERR1797969 | Illumina RNA-seq | HI Serum rep 1 | Paired-end 100 nt | ~52M reads |
-| ERR1797970 | Illumina RNA-seq | HI Serum rep 2 | Paired-end 100 nt | ~53M reads |
-| ERR1797971 | Illumina RNA-seq | HI Serum rep 3 | Paired-end 100 nt | ~55M reads |
-| ERR1797972 | Illumina RNA-seq | BHI rep 1 | Paired-end 100 nt | ~54M reads |
-| ERR1797973 | Illumina RNA-seq | BHI rep 2 | Paired-end 100 nt | ~48M reads |
-| ERR1797974 | Illumina RNA-seq | BHI rep 3 | Paired-end 100 nt | ~46M reads |
+| SRA Accession | Type | Condition | Library |
+|---|---|---|---|
+| SRR2912679 | PacBio WGS | — | CLR long reads |
+| ERR1797969 | Illumina RNA-seq | HI Serum rep 1 | Paired-end 100 nt |
+| ERR1797970 | Illumina RNA-seq | HI Serum rep 2 | Paired-end 100 nt |
+| ERR1797971 | Illumina RNA-seq | HI Serum rep 3 | Paired-end 100 nt |
+| ERR1797972 | Illumina RNA-seq | BHI rep 1 | Paired-end 100 nt |
+| ERR1797973 | Illumina RNA-seq | BHI rep 2 | Paired-end 100 nt |
+| ERR1797974 | Illumina RNA-seq | BHI rep 3 | Paired-end 100 nt |
 
 **Note:** FastQC was run only on Illumina reads. PacBio reads are long-read CLR data for which FastQC is not appropriate.
 
@@ -91,7 +90,7 @@ Soft links to individual files were created in the working directory rather than
 ```
 Genome_Analysis_26/
 ├── scripts/          # All SLURM batch scripts and analysis scripts
-├── results/          # Small output files, logs, summary tables (tracked in git)
+├── results/          # Small interesting output files, logs, summary tables (tracked in git)
 │   ├── 1_fastqc/
 │   ├── 2_trimmomatic/
 │   ├── 3_assembly/
@@ -109,7 +108,7 @@ Genome_Analysis_26/
 │   └── tmp/          # Intermediate outputs needed for the pipeline (BAMs, trimmed reads, etc.)
 └── errors/           # Slurm error logs.
 └── outputs/          # Slurm output logs.
-└── wiki.md           # This document, then also uploaded in the github wiki site.
+└── docs/             # Also uploaded in the github wiki site.
 ```
 
 ### Analysis Workflow
@@ -153,13 +152,13 @@ flowchart TD
 | 1. FastQC (raw) | `scripts/1_fastqc_illumina.sh` | 2026-05-15 | `results/1_fastqc/` — 12 HTML reports |
 | 2. Genome assembly | `scripts/2_assembly_nogrid.sh` | 2026-04-15 | `data/tmp/2_canu_assembly/paper1_e745.contigs.fasta` |
 | 3. Assembly QC | `scripts/3_quast.sh` | 2026-04-21 | `results/3.5_quast/report.txt` |
-| 4. Annotation | `scripts/4_prokka.sh` | 2026-04-21 | `results/4_prokka/paper1.*` |
+| 4. Annotation | `scripts/4_annotation_prokka.sh` | 2026-04-21 | `results/4_prokka/paper1.*` |
 | 5. Synteny | `scripts/5_synteny_mummer.sh` | 2026-05-21 | `results/5_synteny/mummerplot.png` |
 | 6. Trimmomatic BHI | `scripts/6_trim_rna_BH.sh` | 2026-05-05 | `data/tmp/5_trim_rna/bh/` |
 | 6b. Trimmomatic Serum | `scripts/6.2_trim_rna_Serum.sh` | 2026-05-05 | `data/tmp/5_trim_rna/serum/` |
 | 7. BWA mapping | `scripts/7_bwa_rnamap.sh` | 2026-05-08 | `data/tmp/7_bwa_rna/` — 6 BAMs + flagstat/coverage |
 | 8. HTSeq-count | `scripts/8_htseq.sh` | 2026-05-11 | `data/tmp/8_htseq_counts/` — 6 count tables |
-| 9. DESeq2 | `scripts/9_deseq2.R` | 2026-05-13 | `results/8_DESeq2/` — CSVs + PDFs |
+| 9. DESeq2 | `scripts/9_DESeq.R` | 2026-05-13 | `results/8_DESeq2/` — CSVs + PDFs |
 | 10. DESeq2 plots | `scripts/10_plot_DESeq.py` | 2026-05-13 | `results/8_DESeq2/plot_*.pdf` |
 | E1. Tn-seq mapping | `scripts/extra_tnseq/12_tnseq_bwa.sh` | 2026-05-20 | `data/tmp/12_tnseq_bwa/` |
 | E2. Tn-seq HTSeq | `scripts/extra_tnseq/12_tnseq_htseq.sh` | 2026-05-20 | `data/tmp/12_tnseq_htseq/` |
@@ -188,11 +187,11 @@ Reports are stored in `results/1_fastqc/` (HTML + ZIP per sample).
 All 12 samples passed the critical quality modules (per-base sequence quality, per-sequence quality scores, per-base N content, sequence length distribution), with Phred scores > 30 across most positions. However, several modules showed failures that are expected and well-understood in the context of bacterial RNA-seq:
 
 - **Adapter Content (FAIL, 12/12 samples):** TruSeq Illumina adapters are present in all samples, as expected from the library preparation protocol. This is not a data quality problem — it is the reason Trimmomatic is run next. Adapters will be removed in the preprocessing step.
-- **Sequence Duplication Levels (FAIL, 12/12 samples):** High duplication is normal in RNA-seq data. Highly expressed genes produce many identical reads, and any rRNA not depleted during library prep is inherently repetitive. Unlike genomic DNA sequencing, duplicate reads in RNA-seq reflect real biology and are not removed.
+- **Sequence Duplication Levels (FAIL, 12/12 samples):** High duplication is normal in RNA-seq data. Highly expressed genes produce many identical reads, and any rRNA not depleted during library prep is inherently repetitive. 
 - **Per base sequence content (FAIL, 9/12 samples):** The first ~10 bases show biased nucleotide composition, a well-documented artifact of random hexamer priming during cDNA synthesis. This does not affect downstream analyses.
 - **Overrepresented sequences and Per sequence GC content (FAIL, 6/12 BHI samples only):** A secondary GC peak and overrepresented sequences were observed in the BHI replicates. This likely reflects rRNA contamination and/or highly expressed BHI-specific transcripts dominating the library.
 
-Overall, the data quality is suitable for downstream analysis. The failures observed are expected artifacts of RNA-seq library preparation, not indicators of poor sequencing quality.
+Overall, the data quality is suitable for downstream analysis. The mentioned fails are expected artifacts of RNA-seq library preparation, not indicators of poor sequencing quality.
 
 ---
 
@@ -202,7 +201,7 @@ Overall, the data quality is suitable for downstream analysis. The failures obse
 
 Trimmomatic (v0.39) was used to remove adapter sequences and low-quality bases from all 6 paired-end RNA-seq samples. The tool was run in paired-end (`PE`) mode, which retains read pairing information — essential for downstream BWA paired-end alignment.
 
-Even though trimming was performed, as indicated by the Student Manual, then the inputs used for the next steps of the analysis were taken from the provided already-trimmed samples. Course professors said that is okay as well, so the pre-trimmed ones were chosen in order to reduce the chances of introducing an error in the analysis.
+Even though trimming was performed, as indicated by the Student Manual, then the inputs used for the next steps of the analysis were taken from the provided already-trimmed samples. Course professors said that is okay, so the pre-trimmed ones were chosen in order to reduce the chances of introducing an error in the analysis.
 
 Trimming parameters used:
 - `ILLUMINACLIP:TruSeq3-PE.fa:2:30:10` — remove TruSeq3 adapters
@@ -222,7 +221,7 @@ trimmomatic PE -threads 2 -phred33 \
     SLIDINGWINDOW:4:15 MINLEN:36
 ```
 
-**Note on memory issues:** Initial runs with 4 threads caused `java.io.IOException: Resource temporarily unavailable` errors (gzip write thread exhaustion) when processing 3 samples in a loop. Samples were re-run individually with 1-2 threads to resolve this memory allocation issue. Rerun scripts were kept for the sake of having a more honest log history.
+**Note on memory issues:** Initial runs with 4 threads caused `java.io.IOException: Resource temporarily unavailable` errors (gzip write thread exhaustion) when processing 3 samples in a loop. Samples were re-run individually with 1 thread to resolve this possible memory allocation issue. Rerun scripts were kept for the sake of having a more honest log history.
 
 ### Results
 
@@ -239,8 +238,7 @@ trimmomatic PE -threads 2 -phred33 \
 
 ### Discussion
 
-??
-On average ~54% of read pairs survived trimming as properly paired. This relatively low survival rate (~50% vs the typical 70-90% for RNA-seq) is explained by the fact that many forward-only reads survive (`Forward Only Surviving` ~40-43%), but their reverse pair is discarded due to quality. This is a known characteristic of this dataset — the reverse reads are notably lower quality, likely due to a batch-specific sequencing issue. The paired surviving reads (~13-15M per sample) should still be well within a sufficient range for differential expression analysis in a ~3.1 Mb bacterial genome.
+On average ~54% of read pairs survived trimming as properly paired. This relatively low survival rate (~50% vs the typical 70-90% for RNA-seq) is explained by the fact that many forward-only reads survive (`Forward Only Surviving` ~40-43%), but their reverse pair is discarded due to quality. The paired surviving reads should still be well within a sufficient range for differential expression analysis.
 
 ---
 
@@ -563,7 +561,7 @@ Three distinct resistance determinants were detected in the assembly:
 | `aac(6')-Ii` | 99.64% | 100% | tig00000001 (chromosome) | Tobramycin, Dibekacin, Gentamicin, Sisomicin, Netilmicin |
 | `msr(C)` | 98.99% | 100% | tig00000001 (chromosome) | Erythromycin, Telithromycin, Quinupristin, Pristinamycin IA |
 | `VanHAX` | 100.00% / 99.96% | 100% | tig00000005 (plasmid, ~40 kb) | Vancomycin, Teicoplanin |
-??
+
 The `VanHAX` operon — the hallmark of vancomycin resistance in *E. faecium* — was found on **tig00000005**, a 40 kb contig flagged as circular by Canu (`suggestCircular=yes`). This suggests that vancomycin resistance is carried on a plasmid, consistent with the known horizontal transferability of the *vanA* resistance cluster in clinical enterococci. Two copies of the operon were detected on this contig (at positions 4974–7580 and 37396–40001), which is explained by the circular nature of the contig — the two hits represent the same operon appearing at both "ends" of the linearised circular sequence.
 
 #### Chromosomal Point Mutations (PointFinder)
@@ -573,7 +571,7 @@ The `VanHAX` operon — the hallmark of vancomycin resistance in *E. faecium* �
 | `gyrA` | p.E87G | GAG → GGG | Glu87Gly | Nalidixic acid, Ciprofloxacin |
 | `parC` | p.S80I | AGC → ATC | Ser80Ile | Nalidixic acid, Ciprofloxacin |
 | `pbp5` | p.V24A, p.S27G, p.R34Q, p.G66E, p.A68T, p.E85D, p.E100Q | multiple | multiple | Ampicillin |
-??
+
 The `gyrA` and `parC` mutations are well-characterised fluoroquinolone resistance determinants. GyrA (DNA gyrase subunit A) and ParC (topoisomerase IV subunit C) are the primary intracellular targets of fluoroquinolone antibiotics; mutations at positions 87 and 80 respectively reduce drug binding affinity, leading to resistance. The combination of both mutations in E745 is consistent with high-level quinolone resistance. The seven `pbp5` mutations collectively alter the structure of penicillin-binding protein 5, reducing its affinity for beta-lactam antibiotics and explaining the intrinsic ampicillin resistance of this strain.
 
 #### Overall Phenotypic Resistance Profile (*E. faecium*-specific)

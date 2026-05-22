@@ -1,17 +1,7 @@
-Referencias? - si, tools
-
-clean code? - un poco, no te ralles
-
-
-README.md
-
-
 636
 616
 
-
-TNSeq---
-
+TNSeq notes ---
 cutadapt script
 quita la seq del transposon que está en 3'. -O 10
 minimum length 16 nucleotides. para que solo mappee en un sitio. Pero mira que el paper es distinto - y añádelo a la discusion.
