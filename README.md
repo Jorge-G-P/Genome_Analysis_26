@@ -16,20 +16,20 @@ outputs/          # slurm output logs, kept for log history
 ```
 
 
-## Overview
+## Steps Overview
 
-| Step | Tool | Output |
+| Step | Tool |
 |---|---|---|
-| PacBio assembly | Canu | 3.15 Mb, 9 contigs, N50 2.77 Mb |
-| Assembly QC | QUAST | `results/3.5_quast/` |
-| Annotation | Prokka | 3,126 CDS, 85 tRNA, 44% hypothetical |
-| Synteny | MUMmer | `results/5_synteny/` |
-| RNA-seq trim | Trimmomatic | `results/2_trimmomatic/` |
-| RNA-seq mapping | BWA mem | ~98.3–98.6% mapped |
-| Read counts | HTSeq-count | `results/7_HTSeq/` |
-| Diff. expression | DESeq2 | 1,252 DEGs (padj<0.05, \|LFC\|>1) |
-| AMR | ResFinder (web) | `results/E2_resfinder/` |
-| Tn-seq | BWA + HTSeq + DESeq2 | `results/E1_TnSeq_DESeq/` |
+| PacBio assembly | Canu |
+| Assembly QC | QUAST |
+| Annotation | Prokka |
+| Synteny | MUMmer |
+| RNA-seq trim | Trimmomatic |
+| RNA-seq mapping | BWA mem |
+| Read counts | HTSeq-count |
+| Diff. expression | DESeq2 |
+| AMR (extra) | ResFinder (web) |
+| Tn-seq (extra) | BWA + HTSeq + DESeq2 |
 
 
 ## Data
