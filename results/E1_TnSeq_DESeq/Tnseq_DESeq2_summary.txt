@@ -1,15 +1,13 @@
 Contrast: HI_Serum vs BHI (reference = BHI)
 sizeFactors:
-HI_Serum_trim_ERR1801009_pass HI_Serum_trim_ERR1801010_pass 
-                    1.4011962                     0.6906053 
-HI_Serum_trim_ERR1801011_pass      BHI_trim_ERR1801012_pass 
-                    1.5653186                     1.0317297 
-     BHI_trim_ERR1801013_pass      BHI_trim_ERR1801014_pass 
-                    1.1133928                     0.9771783 
+HI_Serum_ERR1801009 HI_Serum_ERR1801010 HI_Serum_ERR1801011      BHI_ERR1801012 
+          1.1890622           1.0614498           1.1723486           0.9660331 
+     BHI_ERR1801013      BHI_ERR1801014 
+          0.9633205           0.8957982 
 
-Tn-seq genes with padj < 0.05: 7 
-padj < 0.05 & log2FC < -1 (depleted = essential in Serum): 3 
-padj < 0.05 & log2FC > 1 (enriched = higher fitness in Serum): 4 
+Tn-seq genes with padj < 0.05: 25 
+padj < 0.05 & log2FC < -1 (depleted = essential in Serum): 15 
+padj < 0.05 & log2FC > 1 (enriched = higher fitness in Serum): 9 
 
 R version 4.4.2 (2024-10-31)
 Platform: x86_64-pc-linux-gnu

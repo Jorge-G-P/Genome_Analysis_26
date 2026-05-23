@@ -7,15 +7,15 @@ suppressPackageStartupMessages({
 })
 
 repo <- getwd()
-count_dir <- file.path(repo, "data/tmp/12_tnseq_htseq")
-out_dir  <- file.path(repo, "data/tmp/13_tnseq_deseq")
+count_dir <- file.path(repo, "data/tmp/13_tnseq_htseq")
+out_dir  <- file.path(repo, "data/tmp/14_tnseq_deseq")
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
 # Tn-seq samples: HI Serum vs BHI (3 replicates each).
 samples <- data.frame(
   sample = c(
-    "HI_Serum_trim_ERR1801009_pass", "HI_Serum_trim_ERR1801010_pass", "HI_Serum_trim_ERR1801011_pass",
-    "BHI_trim_ERR1801012_pass",      "BHI_trim_ERR1801013_pass",       "BHI_trim_ERR1801014_pass"
+    "HI_Serum_ERR1801009", "HI_Serum_ERR1801010", "HI_Serum_ERR1801011",
+    "BHI_ERR1801012",      "BHI_ERR1801013",       "BHI_ERR1801014"
   ),
   condition = factor(
     c(rep("HI_Serum", 3L), rep("BHI", 3L)),

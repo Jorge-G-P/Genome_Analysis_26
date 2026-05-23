@@ -17,8 +17,8 @@ cd "$REPO_ROOT" || exit 1
 
 module load HTSeq/2.1.2-gfbf-2024a
 
-BAM_DIR=data/tmp/12_tnseq_bwa
-OUT_DIR=data/tmp/12_tnseq_htseq
+BAM_DIR=data/tmp/12_tnseq_bowtie
+OUT_DIR=data/tmp/13_tnseq_htseq
 mkdir -p "$OUT_DIR"
 
 GFF_SRC=data/tmp/4_prokka_ann/paper1.gff
@@ -42,7 +42,7 @@ if [ "${#BAMS[@]}" -eq 0 ]; then
   exit 1
 fi
 
-# -r pos     : BAMs are position-sorted (produced by samtools sort in 12_tnseq_bwa.sh)
+# -r pos     : BAMs are position-sorted
 # -s no      : unstranded — correct for Tn-seq; insertion orientation is not meaningful here
 # -m union   : count a read if it overlaps any part of a feature
 # -t CDS/-i ID : Prokka annotates coding sequences as CDS with ID= locus-tag attributes

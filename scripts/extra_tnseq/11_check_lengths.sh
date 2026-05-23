@@ -1,7 +1,14 @@
 #!/bin/bash
-# Quick check: verify all 6 trimmed Tn-seq files have 16 nt reads
-# Run on UPPMAX after 11_cut.sh finishes:
-#   bash scripts/extra_tnseq/11_check_lengths.sh
+#SBATCH --job-name=tnseq_cut
+#SBATCH --account=uppmax2026-1-61
+#SBATCH --time=00:10:00
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=8G
+#SBATCH --chdir=/home/gorgis/projects/genome/Genome_Analysis_26
+#SBATCH --output=/home/gorgis/projects/genome/Genome_Analysis_26/outputs/tnseq_cut-%j.out
+#SBATCH --error=/home/gorgis/projects/genome/Genome_Analysis_26/errors/tnseq_cut-%j.err
 
 TRIM_DIR=data/tmp/11_tnseq_cut
 

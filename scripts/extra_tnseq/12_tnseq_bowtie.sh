@@ -22,7 +22,7 @@ THREADS=${SLURM_CPUS_PER_TASK:-4}
 
 REF=data/tmp/2_canu_assembly/paper1_e745.contigs.fasta
 BOWTIE2_IDX=data/tmp/2_canu_assembly/paper1_e745_bowtie2
-OUT_DIR=data/tmp/12_tnseq_bwa
+OUT_DIR=data/tmp/12_tnseq_bowtie
 mkdir -p "$OUT_DIR"
 
 # Build Bowtie2 index if not already present

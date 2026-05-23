@@ -17,4 +17,4 @@ cd "$REPO_ROOT" || exit 1
 
 module load R-bundle-Bioconductor/3.20-foss-2024a-R-4.4.2
 
-Rscript scripts/13_tnseq_deseq.R
+Rscript scripts/extra_tnseq/14_tnseq_deseq.R

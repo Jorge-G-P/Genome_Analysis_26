@@ -19,4 +19,4 @@ module load matplotlib/3.9.2-gfbf-2024a
 module load Seaborn/0.13.2-gfbf-2024a
 module load scikit-learn/1.6.1-gfbf-2024a
 
-python3 scripts/14_tnseq_plot.py
+python3 scripts/extra_tnseq/15_tnseq_plot.py
