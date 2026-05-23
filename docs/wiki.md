@@ -136,7 +136,8 @@ flowchart TD
 
   CANU --> RESFINDER["ResFinder — AMR extra"]
 
-  TN --> TNBWA["BWA mem — Tn-seq mapping"]
+  TN --> TNCUT["cutadapt — remove transposon, keep 16 nt"]
+  TNCUT --> TNBWA["Bowtie2 — Tn-seq mapping"]
   CANU -->|"reference"| TNBWA
   TNBWA --> TNHTSEQ["HTSeq-count — Tn-seq"]
   TNHTSEQ --> TNDESEQ["DESeq2 — HI Serum vs BHI extra"]
@@ -269,7 +270,7 @@ Canu produced a small number of contigs for a bacterial genome, which is expecte
 
 The read length distribution from the Canu report shows the PacBio library quality:
 
-![Canu read length distribution — corrected reads](results/3_assembly/readlengths-cor.png)
+![Canu read length distribution — corrected reads](../results//3_assembly/readlengths-cor.png)
 
 ### Discussion
 
@@ -305,8 +306,8 @@ Key QUAST metrics:
 | GC content | 37.79% |
 | N's per 100 kbp | 0.00 |
 
-![QUAST Nx plot](results/plots/QUAST_Nx.png)
-![QUAST cumulative length plot](results/plots/QUAST_cumulative.png)
+![QUAST Nx plot](../results//plots/QUAST_Nx.png)
+![QUAST cumulative length plot](../results//plots/QUAST_cumulative.png)
 
 ### Discussion
 
@@ -386,7 +387,7 @@ The resulting plot is stored at `results/5_synteny/mummerplot.png`.
 
 ### Results & Discussion
 
-![Synteny plot](results/5_synteny/mummerplot.png)
+![Synteny plot](../results//5_synteny/mummerplot.png)
 
 The dot-plot shows strong synteny between E745 and E0019EM0028 (99.66% average nucleotide identity). The majority of the genome is collinear (diagonal alignment), indicating highly conserved gene order. A small number of off-diagonal alignments are visible, representing minor genomic rearrangements — inversions or translocations relative to the reference. These are relatively common even between closely related bacterial strains and are often associated with mobile genetic elements such as transposons or genomic islands, or even technical errors.
 
@@ -426,8 +427,8 @@ Mapping statistics were computed for all 6 samples via `scripts/7b_bwa_stats.sh`
 | ERR1797970 | Serum rep 2 | 29,422,990 | 28,938,873 | 98.35% |
 | ERR1797971 | Serum rep 3 | 28,112,012 | 27,633,023 | 98.30% |
 
-![BWA mapping rates per sample](results/plots/bwa_mapping_rates.png)
-![RNA-seq coverage depth per contig](results/plots/coverage_per_contig.png)
+![BWA mapping rates per sample](../results//plots/bwa_mapping_rates.png)
+![RNA-seq coverage depth per contig](../results//plots/coverage_per_contig.png)
 
 ### Discussion
 
@@ -469,7 +470,7 @@ Six count files were produced, each containing raw integer counts per gene for ~
 
 The count distribution is typical for RNA-seq: a large number of genes have very low counts (< 10 reads), while a small number of highly expressed genes dominate the count table.
 
-![Count distribution per gene — HTSeq](results/plots/DESeq2_count_histogram.png)
+![Count distribution per gene — HTSeq](../results//plots/DESeq2_count_histogram.png)
 
 ---
 
@@ -501,8 +502,8 @@ Plots generated: PCA plot, heatmap (top 50 DEGs), volcano plot.
 | Total DEGs (padj < 0.05, \|LFC\| > 1) | 1,252 |
 
 
-![DESeq2 PCA plot — Serum vs BHI](results/plots/DESeq2_PCA.png)
-![DESeq2 volcano plot — Serum vs BHI](results/plots/DESeq2_volcano.png)
+![DESeq2 PCA plot — Serum vs BHI](../results//plots/DESeq2_PCA.png)
+![DESeq2 volcano plot — Serum vs BHI](../results//plots/DESeq2_volcano.png)
 
 ### Discussion
 The PCA plot shows clear separation between the Serum and BHI conditions along the first principal component, suggesting that growth condition is the main source of transcriptional variation. Replicates within each condition cluster tightly together, indicating good experimental reproducibility.
@@ -605,95 +606,144 @@ Reassuringly, E745 remains sensitive to linezolid, which is currently one of the
 
 ### Background
 
-RNA-seq tells us which genes change their expression level in response to a condition in a specific moment in time, but it cannot distinguish whether a gene is actually *required* for growth in that condition. In Tn-seq, a library of transposon mutants is created — ideally with insertions distributed across every non-essential gene in the genome. This library is then subjected to a selective condition (here: growth in human serum) and a control condition (growth in BHI). After growth, sequencing of the transposon insertion sites measures the relative abundance of each mutant.
+RNA-seq tells us which genes change their expression level in response to a condition at a specific moment in time, but it cannot distinguish whether a gene is actually *required* for growth in that condition. In Tn-seq, a library of transposon mutants is created — ideally with insertions distributed across every non-essential gene in the genome. This library is then subjected to a selective condition (here: growth in human serum) and a control condition (growth in BHI). After growth, sequencing of the transposon insertion sites measures the relative abundance of each mutant.
 
-Therefore, if a gene is essential for growth specifically in serum, mutants with transposons in that gene will be depleted from the serum-grown population (they cannot survive) but will still be present in the BHI-grown population (the gene is not needed there). These **conditionally essential** genes are therefore detected as those with significantly fewer transposon insertions (fewer reads) in serum compared to BHI.
+Therefore, if a gene is essential for growth specifically in serum, mutants with transposons in that gene will disappear from the serum-grown population (they cannot survive) but will still be present in the BHI-grown population (as the gene would not be needed there). These **conditionally essential** genes are detected as those with significantly fewer transposon insertions in serum compared to BHI.
 
-Conversely, genes that show more insertions in serum than in BHI represent loci where disruption confers a **fitness advantage** in serum — for example, genes encoding costly functions that are unnecessary or even detrimental in the blood environment.
+At the same time, genes that show more insertions in serum than in BHI suggests that disruption in those specific genes confers a **fitness advantage** in serum.
 
 ### Methods
 
 #### Data
 
-Tn-seq libraries were sequenced using single-end Illumina reads (50 nt). Six samples were used — 3 replicates grown in HI Serum and 3 in BHI:
+Six Tn-Seq samples were used — 3 replicates grown in HI Serum and 3 in BHI:
 
+| SRA Accession | Condition |
+|---|---|
+| ERR1801009 | HI Serum rep 1 |
+| ERR1801010 | HI Serum rep 2 |
+| ERR1801011 | HI Serum rep 3 |
+| ERR1801012 | BHI rep 1 |
+| ERR1801013 | BHI rep 2 |
+| ERR1801014 | BHI rep 3 |
+
+#### Transposon Removal
+
+Before mapping, the transposon sequence must be removed from each raw 50 nt Tn-seq read. Otherwise the transposon itself would map to the genome rather than the insertion site, producing misleading counts.
+
+Cutadapt was used in two steps per sample:
+1. Remove the 3' transposon sequence (`AACAGGTTGGATGATAAGTCCCCGGTCTTC`)
+2. Remove the 6 nt 5' barcode 
+
+Making sure, this way, exactly 16 nt are kept per read.
+
+```bash
+# Script: scripts/extra_tnseq/11_cut.sh
+module load cutadapt/5.0
+# Step 1: trim transposon
+cutadapt -a AACAGGTTGGATGATAAGTCCCCGGTCTTC -O 10 -o ${ACC}_notransposon.fastq.gz ${INPUT}
+# Step 2: remove barcode, keep 16 nt genomic insert
+cutadapt -u 6 --length 16 --minimum-length 16 -o ${ACC}_16nt.fastq.gz ${ACC}_notransposon.fastq.gz
+```
+
+Output: `data/tmp/11_tnseq_cut/ERR180100X_16nt.fastq.gz` (6 files, all reads exactly 16 nt).
 
 #### Mapping
 
-Tn-seq reads were mapped to the Canu assembly using BWA mem in single-end mode. Since these are single-end reads (unlike the paired-end RNA-seq reads), only one FASTQ file per sample was provided to BWA. Output BAMs were sorted and indexed with SAMtools.
+Following the paper's methodology, the trimmed 16 nt genomic fragments were mapped to the Canu assembly using **Bowtie2**. Output BAMs were sorted and indexed with SAMtools. Bowtie2 was used instead of using BWA again, because BWA does not work properly with such short reads.
 
 ```bash
 # Script: scripts/extra_tnseq/12_tnseq_bwa.sh
-bwa mem -t 2 data/tmp/2_canu_assembly/paper1_e745.contigs.fasta \
-    ${SAMPLE}.fastq.gz \
-    | samtools sort -o data/tmp/12_tnseq_bwa/${SAMPLE}.bam
-samtools index data/tmp/12_tnseq_bwa/${SAMPLE}.bam
+module load Bowtie2/2.5.4-GCC-13.3.0 SAMtools/1.22.1-GCC-13.3.0
+bowtie2-build data/tmp/2_canu_assembly/paper1_e745.contigs.fasta data/tmp/2_canu_assembly/paper1_e745_bowtie2
+
+bowtie2 -x data/tmp/2_canu_assembly/paper1_e745_bowtie2 \
+    -U ${ACC}_16nt.fastq.gz \
+    --no-unal -p 4 \
+    | samtools sort -o data/tmp/12_tnseq_bwa/${LABEL}_${ACC}.sorted.bam
+samtools index data/tmp/12_tnseq_bwa/${LABEL}_${ACC}.sorted.bam
 ```
 
 #### Read Counting
 
-HTSeq-count was used to count Tn-seq reads per gene using the same Prokka GFF (with `##FASTA` removed) as for the RNA-seq analysis. This assigns each mapped read to the gene whose annotated region it falls within.
+HTSeq-count was used to count Tn-seq reads per gene using the same Prokka GFF (with `##FASTA` removed) as for the RNA-seq analysis. The paper used IGV, but both tools should produce equivalent results.
 
 ```bash
 # Script: scripts/extra_tnseq/12_tnseq_htseq.sh
-htseq-count -f bam -r pos -s no -t CDS -i gene_id \
-    data/tmp/12_tnseq_bwa/${SAMPLE}.bam \
-    data/tmp/4_prokka_ann/paper1_no_fasta.gff \
+htseq-count -r pos -s no -m union -t CDS -i ID \
+    data/tmp/12_tnseq_bwa/${SAMPLE}.sorted.bam \
+    data/tmp/12_tnseq_htseq/paper1_no_fasta.gff \
     > data/tmp/12_tnseq_htseq/${SAMPLE}.counts.tsv
 ```
 
 #### Differential Abundance Analysis (DESeq2)
 
-The same DESeq2 statistical framework used for RNA-seq was applied to the Tn-seq count data. Here, the counts represent transposon insertion abundances rather than transcript abundances, but the underlying statistical calculations are equivalent.
+The same DESeq2 statistical framework used for RNA-seq was applied to the Tn-seq count data. The counts here represent transposon insertion abundances rather than transcript abundances, but the statistical model is equivalent.
 
-Contrast: **HI_Serum vs BHI** (reference = BHI)
-- Negative log2FC (depleted in Serum) = gene required for serum survival → **conditionally essential**
-- Positive log2FC (enriched in Serum) = disruption confers advantage in serum → **fitness cost in serum**
+Contrast explanation: **HI_Serum vs BHI**
+- Negative log2FC (depleted in Serum) → gene required for serum survival → **conditionally essential**
+- Positive log2FC (enriched in Serum) → disruption confers advantage in serum → **fitness cost in serum**
 
+Significance thresholds: padj (Benjamini-Hochberg FDR) < 0.05, |log2FC| > 1.
 
-Significance thresholds: adjusted p-value (Benjamini-Hochberg FDR) < 0.05, |log2FC| > 1.
-
-Plots (volcano, PCA, count histogram) were generated with:
-
-```bash
-# Script: scripts/extra_tnseq/14_tnseq_plot.sh → runs scripts/extra_tnseq/14_tnseq_plot.py
-```
 
 ### Results
 
 | Category | Count |
 |---|---|
-| Total genes tested | ~3,126 |
-| Significant hits (padj < 0.05) | 7 |
-| Depleted in Serum (essential in Serum, LFC < -1) | **3** |
-| Enriched in Serum (fitness cost in Serum, LFC > 1) | **4** |
+| Total genes tested | 3,126 |
+| Significant hits (padj < 0.05) | 25 |
+| Depleted in Serum (conditionally essential, log2FC < -1) | **15** |
+| Enriched in Serum (fitness cost in Serum, log2FC > 1) | **9** |
 
-The three genes identified as conditionally essential in serum (depleted, padj < 0.05, log2FC < -1):
+The 15 genes conditionally essential in serum (depleted, padj < 0.05, log2FC < -1):
+(Gene functions in this table were extracted from results/prokka/paper1.tsv)
 
-| Gene ID | log2FC (Serum vs BHI) | padj | Interpretation |
-|---|---|---|---|
-| LPCHMCBP_00934 | -9.80 | 0.039 | Required for serum survival |
-| LPCHMCBP_01716 | -8.30 | 0.050 | Required for serum survival |
-| LPCHMCBP_02043 | -9.17 | 0.050 | Required for serum survival |
+| Gene ID | Gene | log2FC | padj | Function |
+|---|---|---|---|---|
+| LPCHMCBP_01329 | *sorA_1* | -15.04 | 2.3e-31 | PTS sorbose-specific EIIC component |
+| LPCHMCBP_00663 | *purA* | -14.98 | 4.2e-31 | Adenylosuccinate synthetase (purine biosynthesis) |
+| LPCHMCBP_01716 | *rpoN1* | -10.89 | 5.6e-15 | RNA polymerase sigma-54 factor |
+| LPCHMCBP_02968 | — | -11.14 | 1.4e-07 | Putative PTS IIB component |
+| LPCHMCBP_00498 | *msr(C)* | -10.73 | 2.2e-04 | ABC-F ribosomal protection protein |
+| LPCHMCBP_02408 | *cmpD* | -10.05 | 9.4e-04 | Bicarbonate transport ATP-binding protein |
+| LPCHMCBP_02294 | *yidA_3* | -9.99 | 1.3e-03 | Sugar phosphatase |
+| LPCHMCBP_00636 | *guaB* | -5.73 | 1.6e-03 | IMP dehydrogenase (purine biosynthesis) |
+| LPCHMCBP_02587 | — | -10.43 | 4.0e-02 | Hypothetical protein |
+| LPCHMCBP_01116 | *yhdG* | -9.95 | 2.2e-02 | Putative amino acid permease |
+| LPCHMCBP_02043 | — | -9.81 | 5.9e-03 | Hypothetical protein |
+| LPCHMCBP_02424 | *pyrC* | -9.52 | 1.4e-02 | Dihydroorotase (pyrimidine biosynthesis) |
+| LPCHMCBP_01326 | *dgaR_2* | -5.51 | 3.9e-219 | Transcriptional regulator of sugar uptake |
+| LPCHMCBP_01330 | *manZ_3* | -5.21 | 3.8e-29 | PTS mannose-specific EIID component |
+| LPCHMCBP_02996 | — | -1.55 | 1.8e-02 | Hypothetical protein |
 
-The four genes enriched in serum (fitness cost when present, LFC > 1):
+The 9 genes enriched in serum (fitness cost when present, log2FC > 1):
 
-| Gene ID | log2FC (Serum vs BHI) | padj | Interpretation |
-|---|---|---|---|
-| LPCHMCBP_01607 | +20.91 | <0.001 | Disruption advantageous in serum |
-| LPCHMCBP_01170 | +9.71 | 0.039 | Disruption advantageous in serum |
-| LPCHMCBP_01900 | +9.06 | 0.050 | Disruption advantageous in serum |
-| LPCHMCBP_02588 | +9.00 | 0.050 | Disruption advantageous in serum |
-
-Results are stored in `results/E1_TnSeq_DESeq/`.
+| Gene ID | Gene | log2FC | padj | Function |
+|---|---|---|---|---|
+| LPCHMCBP_02560 | *ytfQ* | +10.41 | 2.7e-05 | ABC transporter periplasmic-binding protein |
+| LPCHMCBP_02100 | *arcA* | +9.51 | 2.3e-05 | Arginine deiminase |
+| LPCHMCBP_00030 | *pyk* | +9.24 | 2.8e-02 | Pyruvate kinase |
+| LPCHMCBP_00070 | — | +3.79 | 4.3e-04 | Alpha-monoglucosyldiacylglycerol synthase |
+| LPCHMCBP_01846 | *dacA* | +3.22 | 6.7e-73 | D-alanyl-D-alanine carboxypeptidase |
+| LPCHMCBP_02588 | *iolU_2* | +3.18 | 1.6e-17 | scyllo-inositol 2-dehydrogenase |
+| LPCHMCBP_01763 | *clsA_1* | +2.96 | 2.5e-03 | Major cardiolipin synthase |
+| LPCHMCBP_00437 | — | +2.53 | 3.6e-20 | Hypothetical protein |
+| LPCHMCBP_02061 | — | +1.40 | 1.7e-02 | Hypothetical protein |
 
 
 ### Discussion
 
-The relatively small number of conditionally essential genes (3) is notable. Published Tn-seq screens in *E. faecium* typically identify tens to hundreds of conditionally essential genes depending on the condition. This is probably due to the transposons not being properly removed from the TNSeq samples.
+The pipeline identified **25 significant genes** (15 essential + 9 fitness cost).
 
-Despite these limitations, the 3 conditionally essential genes identified represent strong candidates for serum-specific survival factors in E745. These are genes whose disruption specifically prevents growth in the blood environment but not in nutrient-rich medium — exactly the type of targets that would be most relevant for developing host-specific antimicrobial strategies.
+**Nucleotide biosynthesis** is the main pathway among these conditionally essential genes. *purA* and *guaB* are directly involved in de novo purine synthesis, while *pyrC* is required for pyrimidine synthesis. This is fully consistent with the paper's main finding: human serum is poor in free purines and pyrimidines, forcing *E. faecium* to synthesise nucleotides de novo to support replication. The paper specifically identified *purA*, *guaB*, *purD*, *purH*, *pyrF*, and *pyrK_2* as essential in serum — our results recover *purA* and *guaB* from this list, and add *pyrC* as a further pyrimidine biosynthesis hit.
 
-The 4 genes enriched in serum (where insertions increase in frequency) point to functions that impose a fitness cost in serum conditions — for example, costly biosynthetic pathways that are unnecessary when the bacterium is scavenging nutrients from blood rather than synthesising them from scratch.
+**Carbohydrate uptake (PTS transporters)** is the second major theme. *manZ_3* (PTS mannose-specific EIID), *sorA_1* (PTS sorbose EIIC), *dgaR_2* (regulator of sugar uptake), and a putative PTS IIB component are all depleted in serum. The paper specifically named *manZ_3* and *manY_2* as among the most strongly essential genes. Glucose is the only free carbohydrate present in appreciable amounts in human blood, making efficient glucose uptake via PTS systems critical for growth in serum.
 
-Together, the Tn-seq and RNA-seq results are complementary: RNA-seq identifies the transcriptional response to serum, while Tn-seq identifies which genes are functionally indispensable. Genes appearing in both analyses — upregulated in serum RNA-seq *and* essential by Tn-seq — would be the highest-priority candidates for further functional characterisation.
+*rpoN1* (sigma-54 factor) is a global transcriptional regulator. Its essentiality in serum suggests that sigma-54-dependent gene expression is required for adaptation to the serum environment, possibly controlling expression of nitrogen assimilation or stress response genes.
+
+Among the **enriched genes** (fitness cost in serum), *dacA* (D-Ala-D-Ala carboxypeptidase) and *clsA_1* (cardiolipin synthase) are predicted cell wall and membrane remodelling genes. The paper also identified these categories as genes whose disruption was advantageous in serum, suggesting that non-essential cell wall biosynthesis pathways impose a metabolic burden that is counterproductive in the nutrient-limited serum environment.
+
+Our obtained results (15 essential genes) are fewer than the paper's 37, which is likely due to: using our Canu assembly rather than the paper's closed reference genome, and using DESeq2 rather than the paper's Cyber-T statistical framework. Despite this, the key biological pathways — nucleotide biosynthesis and carbohydrate PTS transport — are recovered, matching the main conclusions of Zhang et al. (2017).
+
+The Tn-seq and RNA-seq results are complementary: RNA-seq identifies the transcriptional response to serum (e.g. upregulation of purine biosynthesis genes), while Tn-seq confirms that those pathways are functionally indispensable. Genes appearing in both analyses — upregulated in serum RNA-seq *and* essential by Tn-seq — are the highest-priority candidates for antimicrobial targets.

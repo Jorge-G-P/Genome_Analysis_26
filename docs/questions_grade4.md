@@ -36,7 +36,7 @@ None of these failures pose a problem for downstream analyses, as they reflect k
 | ERR1797970 | Serum rep 2 | 26,634,380 | 1,123,683 | 4.22% |
 | ERR1797971 | Serum rep 3 | 27,609,615 | 1,545,834 | 5.60% |
 
-![Trimmomatic read survival per sample](results/plots/trimmomatic_survival.png)
+![Trimmomatic read survival per sample](../results//plots/trimmomatic_survival.png)
 
 On average ~4.5% of read pairs were fully discarded. An additional ~40% of reads survived only as forward-only (orphan) reads due to the reverse read being too low quality; these orphan reads were not used in downstream BWA paired-end mapping.
 
@@ -199,7 +199,7 @@ Mapping rates from BWA flagstat:
 | ERR1797970 | Serum rep 2 | 98.35% |
 | ERR1797971 | Serum rep 3 | 98.30% |
 
-![BWA mapping rates per sample](results/plots/bwa_mapping_rates.png)
+![BWA mapping rates per sample](../results//plots/bwa_mapping_rates.png)
 
 ~98-99% of reads map back to the assembly. This is excellent and indicates that the assembly captures almost all of the sequenced genome. The ~1–2% unmapped reads likely represent: sequencing errors that prevent alignment, reads from low-complexity or repetitive regions with ambiguous mapping, or minor contaminating sequences in the library.
 
@@ -216,7 +216,7 @@ From `BH_ERR1797972.coverage.txt`, coverage varies substantially across contigs:
 | tig00000005 (VanHAX plasmid) | 40,013 | 350× |
 | tig00000004 | 14,734 | 29× |
 
-![Coverage depth per contig — ERR1797972 BHI rep 1](results/plots/coverage_per_contig.png)
+![Coverage depth per contig — ERR1797972 BHI rep 1](../results//plots/coverage_per_contig.png)
 
 The chromosome (tig00000001) has by far the highest coverage (~932×) because it is the most abundant sequence in the cell. Some plasmids show higher coverage than their size would predict (e.g., tig00000005 at 350× despite being only 40 kb), suggesting they are present at higher copy numbers per cell than the chromosome. tig00000004 and tig00000008 show lower coverage (~25–29×), suggesting they may be low-copy plasmids. Coverage depth therefore provides information about plasmid copy number, which is biologically meaningful — high-copy plasmids can produce more gene product per cell.
 
@@ -235,7 +235,7 @@ No. Mapping rates are consistent across all replicates within each condition (~9
 The count distribution from HTSeq is highly skewed: a large number of genes have very low counts (< 10), while a small number of highly expressed genes (ribosomal proteins, metabolic enzymes) have counts in the tens of thousands. This is typical for RNA-seq — most genes are expressed at low to moderate levels, with a few housekeeping genes dominating the count table.
 
 
-![Count distribution per gene](results/plots/DESeq2_count_histogram.png)
+![Count distribution per gene](../results//plots/DESeq2_count_histogram.png)
 
 Most genes appear to be expressed at some level in at least one condition. A common practical threshold is **≥10 counts** in at least some samples as the minimum to consider a gene expressed — below this, counts are in the noise range where Poisson variation dominates. DESeq2 automatically filters very low-count genes (independent filtering) before testing, removing genes unlikely to be statistically testable.
 
@@ -253,8 +253,8 @@ My analysis identified 1,252 genes with padj < 0.05 and |log2FC| > 1 (or 524 wit
 
 The PCA plot shows clear separation between BHI and Serum conditions along PC1, which captures the majority of variance in the dataset. The three replicates within each condition cluster tightly together, confirming good experimental reproducibility. This pattern indicates that the growth condition (serum vs BHI) is the dominant source of transcriptional variation and that there are no major outlier samples. One single component capturing so much variation suggests that the differentiation between both groups is very clear.
 
-![DESeq2 PCA plot](results/plots/DESeq2_PCA.png)
-![DESeq2 volcano plot](results/plots/DESeq2_volcano.png)
+![DESeq2 PCA plot](../results//plots/DESeq2_PCA.png)
+![DESeq2 volcano plot](../results//plots/DESeq2_volcano.png)
 
 ---
 
