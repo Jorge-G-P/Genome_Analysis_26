@@ -9,3 +9,21 @@ bwa puede dar error con seqs de menos de 70 nt. Y aqui vamos a usar 16 nt o un p
 6 primeros - y luego los ~29 ultimos.
 
 
+
+The paper (Methods, page 8) describes this pipeline:
+Step 1 ✅ 11_cut.sh — Transposon trimming
+Already done. Output: 6 × ERR180100X_16nt.fastq.gz
+Step 2 ✅ 12_tnseq_bwa.sh — Map with Bowtie2
+"16-nucleotide fragments...were mapped to the E745 genome using Bowtie 2"
+Output: 6 BAMs in data/tmp/12_tnseq_bwa/
+Step 3 ✅ 12_tnseq_htseq.sh — Count reads per gene
+"results of the alignment were sorted and counted...then summed over the gene. Read mapping to the final 10% of a gene were discarded"
+The paper actually used IGV with 25 nt windows, but HTSeq-count is a valid equivalent for our purposes. One important detail the paper mentions: reads mapping to the final 10% of a gene should be discarded, as those insertions may not inactivate gene function. HTSeq doesn't do this automatically — this is a known simplification we're making.
+Output: 6 count tables in data/tmp/12_tnseq_htseq/
+Step 4 ✅ 13_tnseq_deseq.R — DESeq2 differential abundance
+"Statistical analysis of the RPKM-values between the experimental conditions was performed using Cyber-T"
+The paper used Cyber-T, not DESeq2, for the statistical test. We're using DESeq2, which is a valid modern alternative. The thresholds to use are: q < 0.05 and fold-change > 2 (i.e. padj < 0.05 and |log2FC| > 1).
+Step 5 ✅ 14_tnseq_plot.py — Plots
+Volcano, PCA, count histogram — same as before, but with the new results.
+What will likely change after the fix
+The paper found 37 conditionally essential genes. We currently find only 3 — almost certainly because the transposon was still in the reads, making most insertions unmappable. After the fix, you should see a substantially larger and more biologically meaningful gene list, likely including nucleotide biosynthesis genes (purD, purH, pyrK2*) and carbohydrate uptake genes (manY_2, *manZ3) that the paper highlights.

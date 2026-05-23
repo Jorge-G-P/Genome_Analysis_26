@@ -234,7 +234,7 @@ trimmomatic PE -threads 2 -phred33 \
 | ERR1797970 | Serum rep 2 | 26,634,380 | 15,334,022 | 57.57% | 4.22% |
 | ERR1797971 | Serum rep 3 | 27,609,615 | 14,186,338 | 51.38% | 5.60% |
 
-![Trimmomatic read survival per sample](results/plots/trimmomatic_survival.png)
+![Trimmomatic read survival per sample](../results/plots/trimmomatic_survival.png)
 
 ### Discussion
 
